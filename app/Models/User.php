@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_active',
     ];
 
     /**
@@ -40,5 +41,16 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_active'         => 'boolean',
     ];
+
+    public function withdraw_request()
+    {
+        return $this->hasMany(Withdraw_Request::class);
+    }
+
+    public function deposit_request()
+    {
+        return $this->hasMany(Deposit_Request::class);
+    }
 }
