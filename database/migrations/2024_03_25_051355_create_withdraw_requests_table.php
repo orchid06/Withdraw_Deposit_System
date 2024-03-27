@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('withdraw_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users' , 'id')->onDelete('cascade');
-            $table->foreignId('withdraw_method_id')->constrained('withdraw_methods' , 'id')->onDelete('cascade');
+            $table->foreignId('withdraw_method_id')->default(0)->constrained('withdraw_methods' , 'id')->onDelete('cascade');
             $table->double('amount');
-            $table->enum('status' , ['pending', 'approved' , 'rejected']);
-            $table->longText('feedback');
+            $table->enum('status' , ['pending', 'approved' , 'rejected'])->default('pending');
+            $table->longText('feedback')->nullable();
             $table->timestamps();
         });
     }

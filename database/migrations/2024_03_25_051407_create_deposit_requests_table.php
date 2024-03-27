@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('deposit_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users' , 'id')->onDelete('cascade');
-            $table->foreignId('deposit_method_id')->constrained('deposit_methods' , 'id')->onDelete('cascade');
+            $table->foreignId('deposit_method_id')->default(1)->constrained('deposit_methods' , 'id')->onDelete('cascade');
             $table->double('amount');
-            $table->enum('status' , ['pending', 'approved' , 'rejected']);
-            $table->longText('feedback');
+            $table->enum('status' , ['pending', 'approved' , 'rejected'])->default('pending');
+            $table->longText('feedback')->nullable();
             $table->timestamps();
         });
     }

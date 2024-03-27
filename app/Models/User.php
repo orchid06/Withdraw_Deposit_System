@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Str;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -21,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'image',
+        'email_verified_at',
         'is_active',
     ];
 
@@ -42,15 +45,27 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'is_active'         => 'boolean',
+        'password'          => 'hashed'
     ];
 
-    public function withdraw_request()
+    public function generateVerificationCode()
     {
-        return $this->hasMany(Withdraw_Request::class);
+        $this->verification_code = Str::random(6);
+        $this->save();
     }
 
-    public function deposit_request()
+    public function withdrawRequests()
     {
-        return $this->hasMany(Deposit_Request::class);
+        return $this->hasMany(WithdrawRequest::class);
+    }
+
+    public function depositRequests()
+    {
+        return $this->hasMany(DepositRequest::class);
+    }
+
+    public function transactionLogs()
+    {
+        return $this->hasMany(TransactionLog::class);
     }
 }

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->json('parameter');
-            $table->integer('min');
-            $table->integer('max');
+            $table->integer('min')->default(1);
+            $table->integer('max')->default(1000);
             $table->timestamps();
         });
     }

@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\VerifiesEmails;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Verified;
+use App\Models\User;
 
 class VerificationController extends Controller
 {
@@ -35,7 +39,59 @@ class VerificationController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('signed')->only('verify');
-        $this->middleware('throttle:6,1')->only('verify', 'resend');
+    }
+
+    public function show()
+    {
+        return view('auth.verify');
+    }
+
+    public function verify(Request $request, int $id, $hash)
+    {
+        if (
+            $request->route('id') == $request->user()->getKey() &&
+            hash_equals((string) $hash, sha1($request->user()->getEmailForVerification()))
+
+        ) {
+
+            if ($request->user()->hasVerifiedEmail()) {
+                return redirect()->route('user.index')->with('success', 'Email already verified.');
+            }
+
+
+            if ($request->user()->markEmailAsVerified()) {
+                event(new Verified($request->user()));
+            }
+
+            return redirect()->route('user.index')->with('success', 'Email verified successfully.');
+        }
+    }
+
+    public function verifyWithCode(Request $request, int $id)
+    {
+        $verificationCode = $request->input('verification_code');
+
+        $user = User::findorfail($id);
+
+        if (!$user->email_verified_at) {
+            if ($verificationCode == $user->verification_code) {
+
+                $user->markEmailAsVerified();
+                
+                return redirect()->route('user.index')->with('success', 'Email verified successfully.');
+            }
+            return back()->with('error', 'Incorrect Code. Try Again');
+        }
+        return redirect()->route('user.index')->with('success', 'Email already verified.');
+    }
+
+
+    public function resend(Request $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return redirect()->route('user.index')->with('success', 'Email already verified.');
+        }
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('success', 'Verification email sent.');
     }
 }
