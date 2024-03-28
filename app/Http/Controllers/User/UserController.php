@@ -66,9 +66,8 @@ class UserController extends Controller
                 default:
                     return redirect()->route('user.index')->with('success', 'You are logged in.');
             }
-        } else {
-            return redirect()->route('user.login')->with('fail', 'Incorrect credentials.');
-        }
+        } 
+        return redirect()->route('user.login')->with('fail', 'Incorrect credentials.');
     }
 
     public function logout(): RedirectResponse
@@ -80,6 +79,7 @@ class UserController extends Controller
     public function index(): View
     {
         $user = Auth::user();
+        
         $isVerified = $user->email_verified_at;
 
         if ($isVerified == null) {

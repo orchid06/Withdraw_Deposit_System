@@ -11,7 +11,7 @@
 
     <!----===== Boxicons CSS ===== -->
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-
+    
 </head>
 
 <body>
@@ -64,9 +64,9 @@
                     </li>
 
                     <li class="nav-link">
-                        <a href="#">
-                            <i class='bx bx-pie-chart-alt icon'></i>
-                            <span class="text nav-text">Analytics</span>
+                        <a href="/admin/users">
+                            <i class='bx bx-user icon'></i>
+                            <span class="text nav-text">Users</span>
                         </a>
                     </li>
 
@@ -114,7 +114,7 @@
 
     <section class="home">
         <div class="content">@yield('content')</div>
-        
+
     </section>
 
     <script>
@@ -145,6 +145,7 @@
             }
         });
     </script>
+
 </body>
 
 </html>

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,15 +60,17 @@ Route::prefix('admin')->name('admin.')->group(function (){
     Route::middleware(['guest:admin'])->group(function () {
 
         Route::view('/login', 'dashboard.admin.login')->name('login');
-        Route::post('/authenticate', [AdminController::class, 'check'])->name('check');
+        Route::post('/authenticate', [LoginController::class, 'check'])->name('check');
     });
 
     Route::middleware(['auth:admin'])->group(function () {
 
         Route::get('/home', [AdminController::class, 'index'])->name('index');
-        Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
+        Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
         Route::get('/methods', [AdminController::class, 'methods'])->name('methods');
+        Route::get('/users', [AdminController::class, 'userList'])->name('userList');
+        Route::post('/user/create', [AdminController::class, 'store'])->name('userCreate');
     });
 });
