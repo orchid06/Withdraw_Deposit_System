@@ -15,9 +15,9 @@
                         </div>
                         <h4 class="mb-2">{{$user->name}}</h4>
                         <p class="text-muted mb-4">{{$user->email}}</p>
-                        <button type="button" class="btn btn-primary btn-rounded btn-lg">
+                        <a href="{{route('user.transactionLog')}}" button type="button" class="btn btn-primary btn-rounded btn-lg">
                             Transactions Log
-                        </button>
+                        </button></a>
                         <div class="d-flex justify-content-between text-center mt-5 mb-2">
                             <div>
                                 <p class="mb-2 h5">8471 $</p>

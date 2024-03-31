@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DepositRequest;
 use App\Models\WithdrawRequest;
 use Illuminate\Contracts\View\View;
+use App\Models\TransactionLog;
 
 class UserController extends Controller
 {
@@ -41,6 +42,7 @@ class UserController extends Controller
         $user->password = $request->password;
         $user->save();
 
+        $user->generateVerificationCode();
         $user->sendEmailVerificationNotification();
 
         Auth::guard('web')->login($user);
@@ -76,7 +78,7 @@ class UserController extends Controller
         return redirect('/');
     }
 
-    public function index(): View
+    public function index()
     {
         $user = Auth::user();
         
@@ -89,23 +91,11 @@ class UserController extends Controller
         return view('dashboard.user.home', compact('user'));
     }
 
-    public function depositRequest(Request $request, int $userId)
+    public function transactionLog()
     {
-        DepositRequest::create([
-            'user_id' => $userId,
-            'amount'  => $request->input('deposit_request')
-        ]);
+        $userId = Auth::user()->id;
+        $transactionLogs = TransactionLog::where('user_id' , $userId)->paginate(4);
 
-        return back()->with('success', 'Deposit Successful');
-    }
-
-    public function withdrawRequest(Request $request, int $userId)
-    {
-        WithdrawRequest::create([
-            'user_id' => $userId,
-            'amount'  => $request->input('withdraw_request')
-        ]);
-
-        return back()->with('success', 'Withdraw Successful');
+        return view('dashboard.user.transactionLog' , compact('transactionLogs'));
     }
 }

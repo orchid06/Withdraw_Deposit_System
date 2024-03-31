@@ -23,10 +23,12 @@
 </head>
 
 <body>
-    @include('includes.alerts')
+    
     <!--$%adsense%$-->
     <main class="cd__main">
+
         <div class="card mb-5 mt-5 border-0">
+        @include('includes.alerts')
             <h4 style="text-align: center; color: #6c757d;">Welcome, {{ Auth::user()->name }} </h4>
             <div class="card-body p-5 text-center">
                 <h4>Verify</h4>

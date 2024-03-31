@@ -4,14 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\DepositMethod;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\DepositRequest;
 use App\Models\TransactionLog;
+use App\Models\WithdrawMethod;
 use App\Models\WithdrawRequest;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -54,9 +57,55 @@ class AdminController extends Controller
         return view('dashboard.admin.logs', compact('users', 'depositLogs', 'withdrawLogs', 'transactionLogs'));
     }
 
-    public function methods(): View
+    public function methods()
     {
-        return view('dashboard.admin.methods');
+        $users = User::select('id', 'name')->get();
+
+        $depositMethods = DepositMethod::get();
+        
+
+        return view('dashboard.admin.methods', compact('users' , 'depositMethods'));
+    }
+
+    public function storeMethods(Request $request)
+    {
+        if ($request->input('transaction_type') === 'deposit') {
+            $parameters = [
+                'fieldname' => $request->input('fieldname'),
+                'fieldvalue' => $request->input('fieldvalue'),
+            ];
+
+            $jsonParameters = json_encode($parameters);
+
+            DepositMethod::create([
+
+                'user_id'   => $request->input('user_id'),
+                'name'      => $request->input('method_name'),
+                'parameter' => $jsonParameters
+
+            ]);
+
+            return back()->with('success', 'Deposit Method added');
+        }
+
+        if ($request->input('transaction_type') === 'withdraw') {
+            $parameters = [
+                'fieldname' => $request->input('fieldname'),
+                'fieldvalue' => $request->input('fieldvalue'),
+            ];
+
+            $jsonParameters = json_encode($parameters);
+
+            WithdrawMethod::create([
+
+                'user_id'   => $request->input('user_id'),
+                'name'      => $request->input('method_name'),
+                'parameter' => $jsonParameters
+
+            ]);
+
+            return back()->with('success', 'Withdraw Method added');
+        }
     }
 
     public function userList(): View
@@ -66,7 +115,7 @@ class AdminController extends Controller
         return view('dashboard.admin.users', compact('users'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
 
@@ -78,16 +127,68 @@ class AdminController extends Controller
 
         ]);
 
-        $imageName      = $request->hasFile('image') ? $this->uploadImage($request->file('image'))
-                                                     : null;
+        $imageName      = $request->hasFile('image')
+            ? $this->uploadImage($request->file('image'))
+            : null;
 
         User::create([
             'name'              => $request->input('name'),
             'email'             => $request->input('email'),
             'password'          => $request->input('password'),
-            'image'             => @$imageName ,
+            'image'             => @$imageName,
         ]);
 
         return back()->with('success', 'User Added');
+    }
+
+    public function edit(Request $request, int $userId): RedirectResponse
+    {
+        $user = User::findOrFail($userId);
+
+        $request->validate([
+
+            'name'              => 'sometimes|required',
+            'email'             => 'sometimes|email|unique:users,email,' . $user->id,
+            'image'             => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'password'          => 'nullable|min:5|max:30',
+            'confirm_password'  => 'nullable|min:5|max:30|same:password'
+        ]);
+
+
+
+
+        $imageName      = $request->hasFile('image')
+            ? $this->uploadImage($request->file('image'))
+            : null;
+
+        $user->update([
+            'name'              => $request->input('name'),
+            'email'             => $request->input('email'),
+            'password'          => $request->input('password') ?? $user->password,
+            'image'             => @$imageName,
+        ]);
+
+        return back()->with('success', 'User info Updated');
+    }
+
+    public function delete(int $userId)
+    {
+        User::findOrFail($userId)->delete();
+
+        return back()->with('success', 'User Deleted');
+    }
+
+    public function updateActiveStatus(Request $request)
+    {
+        try {
+
+            $user = User::findOrFail($request->input('user_id'));
+            $user->update([
+                'is_active' => $request->input('is_active')
+            ]);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update user active status'], 500);
+        }
     }
 }

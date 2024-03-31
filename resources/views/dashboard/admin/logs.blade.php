@@ -5,6 +5,61 @@
 <link href="{{asset('/css/tableStyle.css')}}" rel=" stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
+<style>
+    input {
+        --s: 20px;
+        /* adjust this to control the size*/
+
+        height: calc(var(--s) + var(--s)/5);
+        width: auto;
+        /* some browsers need this */
+        aspect-ratio: 2.25;
+        border-radius: var(--s);
+        margin: calc(var(--s)/2);
+        display: grid;
+        cursor: pointer;
+        background-color: #ff7a7a;
+        box-sizing: content-box;
+        overflow: hidden;
+        transition: .3s .1s;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    input:before {
+        content: "";
+        padding: calc(var(--s)/10);
+        --_g: radial-gradient(circle closest-side at calc(100% - var(--s)/2) 50%, #000 96%, #0000);
+        background:
+            var(--_g) 0 /var(--_p, var(--s)) 100% no-repeat content-box,
+            var(--_g) var(--_p, 0)/var(--s) 100% no-repeat content-box,
+            #fff;
+        mix-blend-mode: darken;
+        filter: blur(calc(var(--s)/12)) contrast(11);
+        transition: .4s, background-position .4s .1s,
+            padding cubic-bezier(0, calc(var(--_i, -1)*200), 1, calc(var(--_i, -1)*200)) .25s .1s;
+    }
+
+    input:checked {
+        background-color: #85ff7a;
+    }
+
+    input:checked:before {
+        padding: calc(var(--s)/10 + .05px) calc(var(--s)/10);
+        --_p: 100%;
+        --_i: 1;
+    }
+
+    body {
+        background: #15202a;
+        margin: 0;
+        height: 100vh;
+        display: grid;
+        place-content: center;
+        place-items: center;
+    }
+</style>
 
 <body>
     <div class="main-content">
@@ -167,14 +222,16 @@
                                             {{$depositLog->created_at}}
                                         </td>
                                         <td>
-                                            <span class="badge badge-dot mr-4">
-                                                <i class="bg-warning"></i> {{$depositLog->status}}
+                                            <span class="badge badge-dot mr-4" id="status-badge-{{$depositLog->id}}">
+                                                <i class="{{ $depositLog->status == 'approved' ? 'bg-success' : 'bg-warning' }}"></i> {{$depositLog->status}}
                                             </span>
                                         </td>
 
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                action
+
+                                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheck{{ $depositLog->id }}" data-deposit-id="{{$depositLog->id }}" {{ ($depositLog->status == "approved") ? 'checked' : 'unchecked' }}>
+
                                             </div>
                                         </td>
                                         <td class="text-right">
@@ -286,14 +343,16 @@
                                             {{$withdrawLog->created_at}}
                                         </td>
                                         <td>
-                                            <span class="badge badge-dot mr-4">
-                                                <i class="bg-warning"></i> {{$withdrawLog->status}}
+                                            <span class="badge badge-dot mr-4" id="status-badge-withdraw{{$withdrawLog->id}}">
+                                                <i class="{{ $withdrawLog->status == 'approved' ? 'bg-success' : 'bg-warning' }}"></i> {{$withdrawLog->status}}
                                             </span>
                                         </td>
 
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                action
+
+                                                <input class="form-check-input-withdraw" type="checkbox" role="switch" id="switchCheck{{ $withdrawLog->id }}" data-withdraw-id="{{$withdrawLog->id }}" {{ ($withdrawLog->status == "approved") ? 'checked' : 'unchecked' }}>
+
                                             </div>
                                         </td>
                                         <td class="text-right">
@@ -311,7 +370,9 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        No Data Found
+                                        <td>
+                                            No Data Found
+                                        </td>
                                     </tr>
                                     @endforelse
 
@@ -369,3 +430,58 @@
 </body>
 
 @endsection
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.form-check-input').change(function() {
+            var depositLogId = $(this).data('deposit-id');
+            var currentStatus = $('#status-badge-' + depositLogId).text().trim().toLowerCase();
+            var newStatus = currentStatus === 'approved' ? 'pending' : 'approved';
+
+            $.ajax({
+                url: '{{ route("admin.updateDepositStatus") }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    depositLog_id: depositLogId,
+                    status: newStatus
+                },
+                success: function(response) {
+
+                    $('#status-badge-' + depositLogId + ' i').removeClass('bg-warning bg-success').addClass(newStatus === 'approved' ? 'bg-success' : 'bg-warning');
+                    $('#status-badge-' + depositLogId).text(newStatus);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating depositLog:', error);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('.form-check-input-withdraw').change(function() {
+            var withdrawLogId = $(this).data('withdraw-id');
+            var currentStatus = $('#status-badge-withdraw' + withdrawLogId).text().trim().toLowerCase();
+            var newStatus = currentStatus === 'approved' ? 'pending' : 'approved';
+
+            $.ajax({
+                url: '{{ route("admin.updateWithdrawStatus") }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    withdrawLog_id: withdrawLogId,
+                    status: newStatus
+                },
+                success: function(response) {
+
+                    $('#status-badge-withdraw' + withdrawLogId + ' i').removeClass('bg-warning bg-success').addClass(newStatus === 'approved' ? 'bg-success' : 'bg-warning');
+                    $('#status-badge-withdraw' + withdrawLogId).text(newStatus);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating depositLog:', error);
+                }
+            });
+        });
+    });
+</script>

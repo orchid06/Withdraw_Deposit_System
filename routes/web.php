@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\DepositController;
+use App\Http\Controllers\WithdrawController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,8 +43,9 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::get('/home',    [UserController::class, 'index'])->name('index');
         Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
-        Route::post('/deposit/request/{userId}', [UserController::class, 'depositRequest'])->name('depositRequest');
-        Route::post('/withdraw/request/{userId}', [UserController::class, 'withdrawRequest'])->name('withdrawRequest');
+        Route::post('/deposit/request/{userId}', [DepositController::class, 'depositRequest'])->name('depositRequest');
+        Route::post('/withdraw/request/{userId}', [WithdrawController::class, 'withdrawRequest'])->name('withdrawRequest');
+        Route::get('/transactionLog',    [UserController::class, 'transactionLog'])->name('transactionLog');
     });
 });
 
@@ -70,7 +73,15 @@ Route::prefix('admin')->name('admin.')->group(function (){
 
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
         Route::get('/methods', [AdminController::class, 'methods'])->name('methods');
+        Route::post('/storeMethods', [AdminController::class, 'storeMethods'])->name('storeMethods');
         Route::get('/users', [AdminController::class, 'userList'])->name('userList');
         Route::post('/user/create', [AdminController::class, 'store'])->name('userCreate');
+        Route::post('/user/edit/{userId}', [AdminController::class, 'edit'])->name('userEdit');
+        Route::get('/user/delete/{userId}', [AdminController::class, 'delete'])->name('userDelete');
+        Route::get('/update-user-active-status' , [AdminController::class, 'updateActiveStatus'])->name('updateActiveStatus');
+        Route::post('/update-deposit-status' , [DepositController::class, 'updateDepositStatus'])->name('updateDepositStatus');
+        Route::post('/update-withdraw-status' , [WithdrawController::class, 'updateWithdrawStatus'])->name('updateWithdrawStatus');
+
+        
     });
 });
