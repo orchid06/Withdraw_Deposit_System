@@ -26,7 +26,7 @@ class LoginController extends Controller
 
         return   Auth::guard('admin')->attempt($request->only('email', 'password'))
             ? redirect()->route('admin.index')->with('success', 'You are logged in as admin')
-            : redirect()->route('admin.login')->with('fail', 'Incorrect credentials');
+            : redirect()->route('admin.login')->with('error', 'Incorrect credentials');
     }
 
     public function logout(): RedirectResponse

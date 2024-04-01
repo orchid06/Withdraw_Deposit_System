@@ -73,7 +73,7 @@ Route::prefix('admin')->name('admin.')->group(function (){
 
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
         Route::get('/methods', [AdminController::class, 'methods'])->name('methods');
-        Route::post('/storeMethods', [AdminController::class, 'storeMethods'])->name('storeMethods');
+        
         Route::get('/users', [AdminController::class, 'userList'])->name('userList');
         Route::post('/user/create', [AdminController::class, 'store'])->name('userCreate');
         Route::post('/user/edit/{userId}', [AdminController::class, 'edit'])->name('userEdit');
@@ -82,6 +82,11 @@ Route::prefix('admin')->name('admin.')->group(function (){
         Route::post('/update-deposit-status' , [DepositController::class, 'updateDepositStatus'])->name('updateDepositStatus');
         Route::post('/update-withdraw-status' , [WithdrawController::class, 'updateWithdrawStatus'])->name('updateWithdrawStatus');
 
+        Route::get('/deposit/create/methods', [DepositController::class, 'createDepositMethod'])->name('createDepositMethod');
+        Route::get('/deposit/edit/methods/{id}', [DepositController::class, 'editDepositMethod'])->name('editDepositMethod');
+        Route::get('/deposit/delete/methods/{id}', [DepositController::class, 'deleteDepositMethod'])->name('deleteDepositMethod');
+        Route::post('/storeDepostMethods', [DepositController::class, 'storeDepositMethod'])->name('storeDepositMethod');
         
     });
 });
+

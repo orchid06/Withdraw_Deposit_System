@@ -8,6 +8,8 @@
     <link rel="stylesheet" type="text/css" href="styles.css" />
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="{{asset('/css/methodStyle.css')}}">
+    <link rel="stylesheet" href="{{asset('/css/tableStyle.css')}}">
+    
 
 </head>
 
@@ -24,9 +26,10 @@
                     <div class="card shadow">
                         <div class="card-header border-0 d-flex justify-content-between align-items-center">
                             <h3 class="mb-0">Deposit Methods</h3>
-                            <button class="btn btn-primary-sm" data-bs-toggle="modal" data-bs-target="#addNewUserModal">
+                            <a href="{{route('admin.createDepositMethod')}}" class="btn btn-primary-sm" style="color: black;">
                                 <i class='bx bx-user-plus'></i> Add New Method
-                            </button>
+                            </a>
+
                         </div>
 
                         <div class="table-responsive">
@@ -36,7 +39,6 @@
                                         <th scope="col">Name</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Action</th>
-                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -51,9 +53,10 @@
                                             </div>
                                         </th>
                                         <td>
+
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheck{{ $user->id }}" data-user-id="{{ $user->id }}" {{ ($user->is_active == true) ? 'checked' : 'unchecked' }}>
-                                                <label class="form-check-label" for="switchCheck{{ $user->id }}">{{ ($user->is_active == true) ? "Active" : "Deactive" }}</label>
+                                                <input class="form-check-input" type="checkbox" id="switchCheck">
+                                                <label class="form-check-label" for="switchCheck"></label>
                                             </div>
 
                                         </td>
@@ -61,28 +64,18 @@
                                         <td>
 
                                             <div class="d-flex align-items-center">
-                                                <button class="btn btn-primary-sm" data-bs-toggle="modal" data-bs-target="#editUserInfoModal{{$user->id}}">
+                                                <a href="{{route('admin.editDepositMethod' , ['id' => $depositMethod->id])}}" button class="btn btn-primary-sm" style="color: black;">
                                                     <i class="bx bx-edit-alt"></i>
-                                                </button>
+                                                    </button></a>
 
-                                                <button class="btn btn-primary-sm" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{$user->id}}">
+                                                <button class="btn btn-primary-sm" data-bs-toggle="modal" data-bs-target="#deleteDepositMethodModal{{$depositMethod->id}}">
                                                     <i class='bx bx-trash-alt'></i>
                                                 </button>
+                                                @include('modals.deleteDepositMethodModal')
                                             </div>
 
                                         </td>
-                                        <td class="text-right">
-                                            <div class="dropdown">
-                                                <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else here</a>
-                                                </div>
-                                            </div>
-                                        </td>
+
                                     </tr>
                                     @empty
                                     <tr>
@@ -95,9 +88,9 @@
                         <div class="card-footer py-4">
                             <nav aria-label="...">
                                 <ul class="pagination justify-content-end mb-0">
-                                    @if ($users->previousPageUrl())
+                                    @if ($depositMethods->previousPageUrl())
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ $users->previousPageUrl() }}" tabindex="-1">
+                                        <a class="page-link" href="{{ $depositMethods->previousPageUrl() }}" tabindex="-1">
                                             <i class="fa fa-angle-left"></i>
                                             <span class="sr-only">Previous</span>
                                         </a>
@@ -111,15 +104,15 @@
                                     </li>
                                     @endif
 
-                                    @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
-                                    <li class="page-item {{ ($users->currentPage() == $page) ? 'active' : '' }}">
+                                    @foreach ($depositMethods->getUrlRange(1, $depositMethods->lastPage()) as $page => $url)
+                                    <li class="page-item {{ ($depositMethods->currentPage() == $page) ? 'active' : '' }}">
                                         <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                                     </li>
                                     @endforeach
 
-                                    @if ($users->nextPageUrl())
+                                    @if ($depositMethods->nextPageUrl())
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ $users->nextPageUrl() }}">
+                                        <a class="page-link" href="{{ $depositMethods->nextPageUrl() }}">
                                             <i class="fa fa-angle-right"></i>
                                             <span class="sr-only">Next</span>
                                         </a>
@@ -143,6 +136,7 @@
     </div>
 
     <script src="{{asset('/js/methodScript.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 
 </html>

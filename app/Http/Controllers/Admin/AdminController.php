@@ -61,7 +61,7 @@ class AdminController extends Controller
     {
         $users = User::select('id', 'name')->get();
 
-        $depositMethods = DepositMethod::get();
+        $depositMethods = DepositMethod::paginate(4);
         
 
         return view('dashboard.admin.methods', compact('users' , 'depositMethods'));
@@ -69,29 +69,11 @@ class AdminController extends Controller
 
     public function storeMethods(Request $request)
     {
-        if ($request->input('transaction_type') === 'deposit') {
-            $parameters = [
-                'fieldname' => $request->input('fieldname'),
-                'fieldvalue' => $request->input('fieldvalue'),
-            ];
-
-            $jsonParameters = json_encode($parameters);
-
-            DepositMethod::create([
-
-                'user_id'   => $request->input('user_id'),
-                'name'      => $request->input('method_name'),
-                'parameter' => $jsonParameters
-
-            ]);
-
-            return back()->with('success', 'Deposit Method added');
-        }
 
         if ($request->input('transaction_type') === 'withdraw') {
             $parameters = [
-                'fieldname' => $request->input('fieldname'),
-                'fieldvalue' => $request->input('fieldvalue'),
+                'min' => $request->input('minimum_amount'),
+                'max' => $request->input('maximum_amount'),
             ];
 
             $jsonParameters = json_encode($parameters);
@@ -100,7 +82,9 @@ class AdminController extends Controller
 
                 'user_id'   => $request->input('user_id'),
                 'name'      => $request->input('method_name'),
-                'parameter' => $jsonParameters
+                'parameter' => $jsonParameters,
+                'min'       => $request->input('minimum_amount'),
+                'max'       => $request->input('maximum_amount'),
 
             ]);
 

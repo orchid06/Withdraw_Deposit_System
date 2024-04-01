@@ -4,7 +4,6 @@
 <link href="{{asset('/css/tableStyle.css')}}" rel=" stylesheet">
 <link href=" {{asset('/css/modalStyle.css')}}" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
 
 <style>
@@ -169,7 +168,7 @@
 <script>
     $(document).ready(function() {
         $('.form-check-input').change(function() {
-            var userId = $(this).data('user-id'); // Get the user ID from the data attribute
+            var userId = $(this).data('user-id'); 
             var isChecked = this.checked ? 1 : 0;
             var label = isChecked ? 'Active' : 'Deactive';
             $(this).siblings('.form-check-label').text(label);

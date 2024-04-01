@@ -1,9 +1,7 @@
-<style>
-    .modal.fade.show {
-        backdrop-filter: blur(8px);
-    }
-</style>
-<!--Withdraw Modal -->
+
+<link rel="stylesheet" href="{{asset('/css/depositModalStyle.css')}}">
+
+<!--Deposit Modal -->
 <div class="modal fade" id="depositModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -16,10 +14,29 @@
                 <div class="modal-body">
 
                     <div class="row mb-3">
-                        <label for="deposit_request" class="col-sm-5 col-form-label"> <h5>Deposit Amount:</h5></label>
+                        <label for="deposit_request" class="col-sm-5 col-form-label">
+                            <h5>Deposit Amount:</h5>
+                        </label>
                         <div class="col-sm-5">
                             <input type="number" class="form-control" id="deposit_request" name="deposit_request">
                         </div>
+                        <div class="col-sm-5">
+                            
+                        </div>
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                            Select a method
+                        </button>
+
+                        <div class="dropdown">
+                            
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                @foreach($depositMethods as $depositMethod)
+                                <li><button class="dropdown-item" type="button">{{$depositMethod->name}}</button></li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                        <p> Mimimum Deposit : {{$depositMethod->min}}<br> Maximum Deposit : {{$depositMethod->max}}</p>
                     </div>
 
                 </div>

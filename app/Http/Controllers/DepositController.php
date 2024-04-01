@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DepositMethod;
 use App\Models\DepositRequest;
 
 use Illuminate\Http\Request;
@@ -49,5 +50,45 @@ class DepositController extends Controller
         }
 
         return response()->json(['message' => 'Deposit log updated successfully']);
+    }
+
+    public function createDepositMethod()
+    {
+        return view('dashboard.admin.createDepositMethod');
+    }
+
+    public function storeDepositMethod(Request $request)
+    {
+       
+        $parameters = [
+            'parameter' => $request->input('parameter')
+        ];
+
+        $jsonParameters = json_encode($parameters);
+
+        DepositMethod::create([
+
+            'user_id'   => $request->input('user_id'),
+            'name'      => $request->input('deposit_method_name'),
+            'parameter' => $jsonParameters,
+            'min'       => $request->input('minimum_amount'),
+            'max'       => $request->input('maximum_amount'),
+
+        ]);
+
+        return back()->with('success', 'Deposit Method added');
+    }
+
+    public function editDepositMethod(int $id)
+    {
+        $depositMethod = DepositMethod::findorfail($id);
+
+        return view('dashboard.admin.editDepositMethod', compact('depositMethod'));
+    }
+
+    public function deleteDepositMethod(int $id)
+    {
+        DepositMethod::findorfail($id)->delete();
+        return back()->with('success', 'Method Deleted');
     }
 }

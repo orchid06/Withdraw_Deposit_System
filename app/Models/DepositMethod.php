@@ -9,6 +9,7 @@ class DepositMethod extends Model
 {
     use HasFactory;
 
+    protected $table    = 'deposit_methods'; 
     protected $fillable = ['name', 'parameter', 'min' , 'max'];
 
     public function deposit_request()

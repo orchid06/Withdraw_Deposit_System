@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
+use App\Models\DepositMethod;
 use App\Models\DepositRequest;
 use App\Models\WithdrawRequest;
 use Illuminate\Contracts\View\View;
@@ -68,7 +69,7 @@ class UserController extends Controller
                 default:
                     return redirect()->route('user.index')->with('success', 'You are logged in.');
             }
-        } 
+        }
         return redirect()->route('user.login')->with('fail', 'Incorrect credentials.');
     }
 
@@ -80,22 +81,25 @@ class UserController extends Controller
 
     public function index()
     {
-        $user = Auth::user();
-        
+        $user           = Auth::user();
+        // $depositMethod = $user->depositRequests->first()->depositMethod;
+
+        $depositMethods = DepositMethod::get();
+
         $isVerified = $user->email_verified_at;
 
         if ($isVerified == null) {
             return redirect()->route('verification.notice')->with('error', 'Please verify you email');
         }
 
-        return view('dashboard.user.home', compact('user'));
+        return view('dashboard.user.home', compact('user', 'depositMethods'));
     }
 
     public function transactionLog()
     {
         $userId = Auth::user()->id;
-        $transactionLogs = TransactionLog::where('user_id' , $userId)->paginate(4);
+        $transactionLogs = TransactionLog::where('user_id', $userId)->paginate(4);
 
-        return view('dashboard.user.transactionLog' , compact('transactionLogs'));
+        return view('dashboard.user.transactionLog', compact('transactionLogs'));
     }
 }

@@ -58,7 +58,7 @@
 
                     <li class="nav-link">
                         <a href="/admin/methods">
-                            <i class='bx bx-cog icon'></i>
+                            <i class='bx bx-customize icon'></i>
                             <span class="text nav-text">Custom Methods</span>
                         </a>
                     </li>
