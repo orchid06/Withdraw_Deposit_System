@@ -22,9 +22,10 @@
             </div>
         </div>
 
-        <div id="formfield">
-            <input type="text" name="parameter" class="text" size="50" placeholder="Custom Field">
+        <div class="row mt-5 mb-4" id="fieldsContainer">
+            <!-- Dynamic Fields go here -->
         </div>
+
         <div class="row justify-content-center">
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -33,7 +34,7 @@
     </form>
 
     <button class="button-1" onclick="add()"><i class="fa fa-plus"></i>Add Custom Field+</button>
-    <button class="button-2" onclick="remove()"><i class="fa fa-minus"></i>Remove</button>
+    <!-- <button class="button-2" onclick="remove()"><i class="fa fa-minus"></i>Remove</button> -->
 
 
 </div>

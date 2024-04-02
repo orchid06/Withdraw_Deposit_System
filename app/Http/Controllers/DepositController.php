@@ -8,10 +8,12 @@ use App\Models\DepositRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\TransactionLog;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class DepositController extends Controller
 {
-    public function depositRequest(Request $request, int $userId)
+    public function depositRequest(Request $request, int $userId): RedirectResponse
     {
         DepositRequest::create([
             'user_id' => $userId,
@@ -21,7 +23,7 @@ class DepositController extends Controller
         return back()->with('success', 'Deposit Successful');
     }
 
-    public function updateDepositStatus(Request $request)
+    public function updateDepositStatus(Request $request): RedirectResponse
     {
         $depositLogId = $request->input('depositLog_id');
         $status       = $request->input('status');
@@ -52,25 +54,39 @@ class DepositController extends Controller
         return response()->json(['message' => 'Deposit log updated successfully']);
     }
 
-    public function createDepositMethod()
+    public function createDepositMethod(): View
     {
         return view('dashboard.admin.createDepositMethod');
     }
 
-    public function storeDepositMethod(Request $request)
+    public function storeDepositMethod(Request $request): RedirectResponse
     {
-       
-        $parameters = [
-            'parameter' => $request->input('parameter')
-        ];
+        $request->validate([
+            'deposit_method_name'  => 'required',
+            'minimum_amount'       => 'required|numeric|gt:0',
+            'maximum_amount'       => 'required|numeric|gt:minimum_amount'
+        ]);
 
-        $jsonParameters = json_encode($parameters);
+        $data = $request->all();
+
+        $fields = [];
+
+        for ($i = 0; isset($data["label_name_$i"]); $i++) {
+            $fields[] = [
+                'label_name' => $data["label_name_$i"],
+                'input_type' => $data["input_type_$i"],
+                'condition' => $data["condition_$i"]
+            ];
+        }
+
+       
+        $jsonFields = json_encode($fields);
 
         DepositMethod::create([
 
             'user_id'   => $request->input('user_id'),
             'name'      => $request->input('deposit_method_name'),
-            'parameter' => $jsonParameters,
+            'fields' => $jsonFields,
             'min'       => $request->input('minimum_amount'),
             'max'       => $request->input('maximum_amount'),
 
@@ -79,16 +95,48 @@ class DepositController extends Controller
         return back()->with('success', 'Deposit Method added');
     }
 
-    public function editDepositMethod(int $id)
+    public function editDepositMethod(int $id): View
     {
         $depositMethod = DepositMethod::findorfail($id);
+        $existingFieldsCount = count(json_decode($depositMethod->fields));
 
-        return view('dashboard.admin.editDepositMethod', compact('depositMethod'));
+        return view('dashboard.admin.editDepositMethod', compact('depositMethod', 'existingFieldsCount'));
     }
 
-    public function deleteDepositMethod(int $id)
+    public function deleteDepositMethod(int $id): RedirectResponse
     {
         DepositMethod::findorfail($id)->delete();
         return back()->with('success', 'Method Deleted');
+    }
+
+    public function updateDepositMethod(Request $request, int $id)
+    {
+        dd($request);
+        $depositMethod = DepositMethod::findorfail($id);
+
+        $data = $request->all();
+
+        $fields = [];
+        
+        for ($i = 0; isset($data["label_name_$i"]); $i++) {
+            $fields[] = [
+                'label_name' => $data["label_name_$i"],
+                'input_type' => $data["input_type_$i"],
+                'condition' => $data["condition_$i"]
+            ];
+        }
+
+        $jsonFields = json_encode($fields);
+
+        $depositMethod->update([
+
+            'user_id'   => $request->input('user_id'),
+            'name'      => $request->input('deposit_method_name'),
+            'fields' => $jsonFields,
+            'min'       => $request->input('minimum_amount'),
+            'max'       => $request->input('maximum_amount'),
+        ]);
+
+        return back()->with('success', 'Deposit Method updated');
     }
 }

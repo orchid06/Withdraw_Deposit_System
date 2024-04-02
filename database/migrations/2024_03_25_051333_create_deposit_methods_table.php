@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('deposit_methods', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->json('parameter');
-            $table->integer('min')->default(1);
-            $table->integer('max')->default(1000);
+            $table->json('fields');
+            $table->double('min')->default(1);
+            $table->double('max')->default(1000);
             $table->timestamps();
         });
     }

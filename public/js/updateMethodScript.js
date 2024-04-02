@@ -1,7 +1,6 @@
-// let existingFieldsCount = document.getElementById("existingFieldsCount");
-// let counter = existingFieldsCount == 'undefined'? 0 :existingFieldsCount+1;
-
-let counter = 0;
+let existingFieldsCount = document.getElementById("existingFieldsCount");
+let counter = existingFieldsCount === null || existingFieldsCount === undefined ? 0 : parseInt(existingFieldsCount.textContent);
+console.log(counter);
 
 function add() {
     const fieldsContainer = document.getElementById("fieldsContainer");

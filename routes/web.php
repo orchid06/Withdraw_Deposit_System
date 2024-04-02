@@ -85,7 +85,8 @@ Route::prefix('admin')->name('admin.')->group(function (){
         Route::get('/deposit/create/methods', [DepositController::class, 'createDepositMethod'])->name('createDepositMethod');
         Route::get('/deposit/edit/methods/{id}', [DepositController::class, 'editDepositMethod'])->name('editDepositMethod');
         Route::get('/deposit/delete/methods/{id}', [DepositController::class, 'deleteDepositMethod'])->name('deleteDepositMethod');
-        Route::post('/storeDepostMethods', [DepositController::class, 'storeDepositMethod'])->name('storeDepositMethod');
+        Route::post('/store/deposit/ethods', [DepositController::class, 'storeDepositMethod'])->name('storeDepositMethod');
+        Route::post('/update/depost/methods/{id}', [DepositController::class, 'updateDepositMethod'])->name('updateDepositMethod');
         
     });
 });
