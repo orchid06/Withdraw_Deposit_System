@@ -1,7 +1,6 @@
 @extends('layouts.user')
 
 @section('content')
-
 <section class="vh-100" style="background: url('/images/bg.jpg');">
     <div class="container py-5 h-100 " style="margin-left: 50px;">
         @include('includes.alerts')
@@ -11,7 +10,7 @@
                 <div class="card" style="border-radius: 15px;">
                     <div class="card-body text-center">
                         <div class="mt-3 mb-4">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp" class="rounded-circle img-fluid" style="width: 100px;" />
+                            <img src="{{url('/uploads/user/'.$user->image)}}" class="rounded-circle img-fluid" style="width: 100px;" />
                         </div>
                         <h4 class="mb-2">{{$user->name}}</h4>
                         <p class="text-muted mb-4">{{$user->email}}</p>
@@ -20,11 +19,11 @@
                         </button></a>
                         <div class="d-flex justify-content-between text-center mt-5 mb-2">
                             <div>
-                                <p class="mb-2 h5">8471 $</p>
+                                <p class="mb-2 h5">$ 8471</p>
                                 <p class="text-muted mb-0">Total Deposit</p>
                             </div>
                             <div class="px-3">
-                                <p class="mb-2 h5">8512 $</p>
+                                <p class="mb-2 h5">$ 8512 </p>
                                 <p class="text-muted mb-0">Total Withdraw</p>
                             </div>
                             <div>

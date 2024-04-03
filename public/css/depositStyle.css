@@ -1,0 +1,104 @@
+/* Styles for the user card inside modal */
+.modal .user-card {
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(248, 247, 247, 0.991);
+    width: 100%;
+    margin: 0 auto;
+}
+
+
+.user-info {
+    text-align: center;
+}
+
+
+.name {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+
+.email {
+    font-size: 14px;
+    margin-top: 0;
+    color: #666;
+}
+
+
+.balance {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+
+.deposit input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    outline: 2px solid #00ffff;
+}
+
+
+.selector select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: none;
+    outline: 2px solid #00ffff;
+}
+
+
+.submit button {
+    width: 100%;
+    padding: 10px;
+    background-color: #14c4bb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit button:hover {
+    background-color: #45a09b;
+}
+
+
+.custom-select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    outline: none;
+    border: 2px solid #00ffff;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 7l5 5 5-5" stroke="%2300ffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 16px;
+}
+
+
+.custom-select option {
+    padding: 10px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 14px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+}
+
+
+.custom-select::-ms-expand {
+    display: none;
+}

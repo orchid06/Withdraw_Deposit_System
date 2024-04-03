@@ -1,5 +1,6 @@
-let existingFieldsCount = document.getElementById("existingFieldsCount");
-let counter = existingFieldsCount === null || existingFieldsCount === undefined ? 0 : parseInt(existingFieldsCount.textContent);
+let existingFieldsCount = document.getElementById('existingFieldsCount').getAttribute('data-count');
+let counter = parseInt(existingFieldsCount);
+
 console.log(counter);
 
 function add() {

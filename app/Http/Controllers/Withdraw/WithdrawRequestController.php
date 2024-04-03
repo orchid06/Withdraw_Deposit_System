@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Withdraw;
 
 use App\Models\WithdrawRequest;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
 use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
 
-class WithdrawController extends Controller
+class WithdrawRequestController extends Controller
 {
     public function withdrawRequest(Request $request, int $userId)
     {

@@ -1,65 +1,32 @@
 <?php
 
-namespace App\Http\Controllers;
-
-use App\Models\DepositMethod;
-use App\Models\DepositRequest;
+namespace App\Http\Controllers\Deposit;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use App\Models\TransactionLog;
+use App\Http\Controllers\Controller;
+use App\Models\DepositMethod;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
-class DepositController extends Controller
+class DepositMethodController extends Controller
 {
-    public function depositRequest(Request $request, int $userId): RedirectResponse
+    public function index()
     {
-        DepositRequest::create([
-            'user_id' => $userId,
-            'amount'  => $request->input('deposit_request')
-        ]);
+        $users = User::select('id', 'name')->get();
 
-        return back()->with('success', 'Deposit Successful');
+        $depositMethods = DepositMethod::paginate(4);
+
+
+        return view('dashboard.admin.depositMethods', compact('users', 'depositMethods'));
     }
 
-    public function updateDepositStatus(Request $request): RedirectResponse
-    {
-        $depositLogId = $request->input('depositLog_id');
-        $status       = $request->input('status');
-
-        $depositLog = DepositRequest::findOrFail($depositLogId);
-
-        $depositLog->status = $status;
-        $depositLog->save();
-
-        $userId   = $depositLog->user_id;
-        $trx_code = 'Trx-' . Str::random(8);
-
-        switch ($status) {
-            case 'approved':
-                TransactionLog::create([
-                    'user_id'   => $userId,
-                    'trx_code'  => $trx_code,
-                    'amount'    => $depositLog->amount,
-                    'trx_type'  => 'deposit'
-                ]);
-                break;
-            case 'pending':
-
-                TransactionLog::destroyLog($userId, $trx_code);
-                break;
-        }
-
-        return response()->json(['message' => 'Deposit log updated successfully']);
-    }
-
-    public function createDepositMethod(): View
+    public function create(): View
     {
         return view('dashboard.admin.createDepositMethod');
     }
 
-    public function storeDepositMethod(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'deposit_method_name'  => 'required',
@@ -79,12 +46,11 @@ class DepositController extends Controller
             ];
         }
 
-       
+
         $jsonFields = json_encode($fields);
 
         DepositMethod::create([
 
-            'user_id'   => $request->input('user_id'),
             'name'      => $request->input('deposit_method_name'),
             'fields' => $jsonFields,
             'min'       => $request->input('minimum_amount'),
@@ -95,7 +61,7 @@ class DepositController extends Controller
         return back()->with('success', 'Deposit Method added');
     }
 
-    public function editDepositMethod(int $id): View
+    public function edit(int $id): View
     {
         $depositMethod = DepositMethod::findorfail($id);
         $existingFieldsCount = count(json_decode($depositMethod->fields));
@@ -103,26 +69,25 @@ class DepositController extends Controller
         return view('dashboard.admin.editDepositMethod', compact('depositMethod', 'existingFieldsCount'));
     }
 
-    public function deleteDepositMethod(int $id): RedirectResponse
+    public function delete(int $id): RedirectResponse
     {
         DepositMethod::findorfail($id)->delete();
         return back()->with('success', 'Method Deleted');
     }
 
-    public function updateDepositMethod(Request $request, int $id)
+    public function update(Request $request, int $id)
     {
-        dd($request);
+
         $depositMethod = DepositMethod::findorfail($id);
 
         $data = $request->all();
 
         $fields = [];
-        
         for ($i = 0; isset($data["label_name_$i"]); $i++) {
             $fields[] = [
                 'label_name' => $data["label_name_$i"],
                 'input_type' => $data["input_type_$i"],
-                'condition' => $data["condition_$i"]
+                'condition'  => $data["condition_$i"]
             ];
         }
 
@@ -130,13 +95,26 @@ class DepositController extends Controller
 
         $depositMethod->update([
 
-            'user_id'   => $request->input('user_id'),
             'name'      => $request->input('deposit_method_name'),
-            'fields' => $jsonFields,
+            'fields'    => $jsonFields,
             'min'       => $request->input('minimum_amount'),
             'max'       => $request->input('maximum_amount'),
         ]);
 
         return back()->with('success', 'Deposit Method updated');
+    }
+
+    public function updateActiveStatus(Request $request)
+    {
+        try {
+
+            $depositMethod = DepositMethod::findOrFail($request->input('depositMethod_id'));
+            $depositMethod->update([
+                'is_active' => $request->input('is_active')
+            ]);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update Method active status'], 500);
+        }
     }
 }

@@ -10,7 +10,8 @@ class DepositMethod extends Model
     use HasFactory;
 
     protected $table    = 'deposit_methods'; 
-    protected $fillable = ['name', 'fields', 'min' , 'max'];
+    protected $fillable = ['name', 'is_active', 'fields', 'min' , 'max'];
+    protected $cast     = ['is_active' => 'boolean'];
 
     public function deposit_request()
     {

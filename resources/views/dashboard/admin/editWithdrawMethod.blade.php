@@ -5,26 +5,26 @@
 
 <div class="container mt-5">
     @include('includes.alerts')
-    <form action="{{route('admin.depositMethod.update' , ['id' => $depositMethod->id])}}" method="POST">
+    <form action="{{route('admin.withdrawMethod.update' , ['id' => $withdrawMethod->id])}}" method="POST">
         @csrf
         <div class="row">
             <div class="col-md-4 mb-3">
-                <label for="deposit_method_name" class="form-label">Deposit Method Name :</label>
-                <input type="text" class="form-control" id="deposit_method_name" name="deposit_method_name" value="{{$depositMethod->name}}">
+                <label for="withdraw_method_name" class="form-label">Withdraw Method Name :</label>
+                <input type="text" class="form-control" id="withdraw_method_name" name="withdraw_method_name" value="{{$withdrawMethod->name}}">
             </div>
             <div class="col-md-4 mb-3">
                 <label for="minimum_amount" class="form-label">Minimum Amount :</label>
-                <input type="number" class="form-control" id="minimum_amount" name="minimum_amount" value="{{$depositMethod->min}}">
+                <input type="number" class="form-control" id="minimum_amount" name="minimum_amount" value="{{$withdrawMethod->min}}">
             </div>
             <div class="col-md-4 mb-3">
                 <label for="maximum_amount" class="form-label">Maximum Amount :</label>
-                <input type="number" class="form-control" id="maximum_amount" name="maximum_amount" value="{{$depositMethod->max}}">
+                <input type="number" class="form-control" id="maximum_amount" name="maximum_amount" value="{{$withdrawMethod->max}}">
             </div>
         </div>
 
         <div class="row mt-5 mb-4" id="fieldsContainer">
 
-            @foreach(json_decode($depositMethod->fields) as $index => $field)
+            @foreach(json_decode($withdrawMethod->fields) as $index => $field)
             <div class="row mt-4">
                 <div class="col">
                     <input type="text" class="form-control" name="label_name_{{ $index }}" value="{{ $field->label_name }}" placeholder="Label name">

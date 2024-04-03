@@ -50,47 +50,14 @@ class AdminController extends Controller
     public function logs(): View
     {
         $users           = User::with('transactionLogs');
-        $depositLogs  = DepositRequest::with('user')->paginate(4);
-        $withdrawLogs = WithdrawRequest::with('user')->paginate(4);
-        $transactionLogs   = TransactionLog::with('user')->paginate(4);
+        $depositLogs     = DepositRequest::with('user')->paginate(4);
+        $withdrawLogs    = WithdrawRequest::with('user')->paginate(4);
+        $transactionLogs = TransactionLog::with('user')->paginate(4);
 
         return view('dashboard.admin.logs', compact('users', 'depositLogs', 'withdrawLogs', 'transactionLogs'));
     }
 
-    public function methods()
-    {
-        $users = User::select('id', 'name')->get();
-
-        $depositMethods = DepositMethod::paginate(4);
-        
-
-        return view('dashboard.admin.methods', compact('users' , 'depositMethods'));
-    }
-
-    public function storeMethods(Request $request)
-    {
-
-        if ($request->input('transaction_type') === 'withdraw') {
-            $parameters = [
-                'min' => $request->input('minimum_amount'),
-                'max' => $request->input('maximum_amount'),
-            ];
-
-            $jsonParameters = json_encode($parameters);
-
-            WithdrawMethod::create([
-
-                'user_id'   => $request->input('user_id'),
-                'name'      => $request->input('method_name'),
-                'parameter' => $jsonParameters,
-                'min'       => $request->input('minimum_amount'),
-                'max'       => $request->input('maximum_amount'),
-
-            ]);
-
-            return back()->with('success', 'Withdraw Method added');
-        }
-    }
+    
 
     public function userList(): View
     {

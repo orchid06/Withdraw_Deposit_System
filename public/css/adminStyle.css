@@ -327,3 +327,9 @@ ul {
     padding-left: initial !important;
     /* Override Bootstrap's padding-left */
 }
+
+.icon-img {
+    padding-left: 15px;
+    width: 45px;
+    height: 35px;
+}

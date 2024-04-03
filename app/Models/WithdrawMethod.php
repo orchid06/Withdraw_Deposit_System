@@ -9,7 +9,9 @@ class WithdrawMethod extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'parameter', 'min', 'max'];
+    protected $table    = 'withdraw_methods';
+    protected $fillable = ['name', 'is_active', 'fields', 'min' , 'max'];
+    protected $cast     = ['is_active' => 'boolean'];
 
     public function withdrawRequests()
     {

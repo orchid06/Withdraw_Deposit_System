@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{asset('/css/tableStyle.css')}}">
     
 
+
 </head>
 
 <body>
@@ -26,7 +27,7 @@
                     <div class="card shadow">
                         <div class="card-header border-0 d-flex justify-content-between align-items-center">
                             <h3 class="mb-0">Deposit Methods</h3>
-                            <a href="{{route('admin.createDepositMethod')}}" class="btn btn-primary-sm" style="color: black;">
+                            <a href="{{route('admin.depositMethod.create')}}" class="button-1" style="color: black;">
                                 <i class='bx bx-user-plus'></i> Add New Method
                             </a>
 
@@ -55,8 +56,8 @@
                                         <td>
 
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="switchCheck">
-                                                <label class="form-check-label" for="switchCheck"></label>
+                                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheck{{ $depositMethod->id }}" data-deposit-method-id="{{ $depositMethod->id }}" {{ ($depositMethod->is_active == true) ? 'checked' : 'unchecked' }}>
+                                                <label class="form-check-label" for="switchCheck{{ $depositMethod->id }}">{{ ($depositMethod->is_active == true) ? "Active" : "Deactive" }}</label>
                                             </div>
 
                                         </td>
@@ -64,7 +65,7 @@
                                         <td>
 
                                             <div class="d-flex align-items-center">
-                                                <a href="{{route('admin.editDepositMethod' , ['id' => $depositMethod->id])}}" button class="btn btn-primary-sm" style="color: black;">
+                                                <a href="{{route('admin.depositMethod.edit' , ['id' => $depositMethod->id])}}" button class="btn btn-primary-sm" style="color: black;">
                                                     <i class="bx bx-edit-alt"></i>
                                                     </button></a>
 
@@ -79,7 +80,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <p>No user Data Found</p>
+                                        <p>No depositMethod Data Found</p>
                                     </tr>
                                     @endforelse
                                 </tbody>
@@ -135,9 +136,39 @@
         </div>
     </div>
 
-    <script src="{{asset('/js/methodScript.js')}}"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 
 </html>
 @endsection
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.form-check-input').change(function() {
+            var depositMethodId = $(this).data('deposit-method-id');
+            var isChecked = this.checked ? 1 : 0;
+            var label = isChecked ? 'Active' : 'Deactive';
+            $(this).siblings('.form-check-label').text(label);
+
+            $.ajax({
+                url: '{{ route("admin.depositMethod.updateActiveStatus") }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    depositMethod_id: depositMethodId,
+                    is_active: isChecked,
+                    
+                },
+                
+                success: function(response) {
+                    console.log('depositMethod active status updated successfully.');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating depositMethod active status:', error);
+                }
+            });
+        });
+    });
+</script>

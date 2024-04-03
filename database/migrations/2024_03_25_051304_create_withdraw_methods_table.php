@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('withdraw_methods', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->json('parameter');
-            $table->integer('min')->default(1);
-            $table->integer('max')->default(1000);
+            $table->boolean('is_active')->default(true);
+            $table->json('fields');
+            $table->double('min')->default(1);
+            $table->double('max')->default(1000);
             $table->timestamps();
         });
     }

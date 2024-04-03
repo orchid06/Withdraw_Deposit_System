@@ -5,12 +5,12 @@
 
 <div class="container mt-5">
     @include('includes.alerts')
-    <form action="{{route('admin.depositMethod.store')}}" method="POST">
+    <form action="{{route('admin.withdrawMethod.store')}}" method="POST">
         @csrf
         <div class="row">
             <div class="col-md-4 mb-3">
-                <label for="deposit_method_name" class="form-label">Deposit Method Name :</label>
-                <input type="text" class="form-control" id="deposit_method_name" name="deposit_method_name" placeholder="Deposit Method Name">
+                <label for="withdraw_method_name" class="form-label">Withdraw Method Name :</label>
+                <input type="text" class="form-control" id="withdraw_method_name" name="withdraw_method_name" placeholder="withdraw Method Name">
             </div>
             <div class="col-md-4 mb-3">
                 <label for="minimum_amount" class="form-label">Minimum Amount :</label>

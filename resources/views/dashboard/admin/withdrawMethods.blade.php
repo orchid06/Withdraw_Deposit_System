@@ -1,24 +1,22 @@
 @extends('layouts.admin')
 @section('content')
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
-<link href="{{asset('/css/tableStyle.css')}}" rel=" stylesheet">
-<link href=" {{asset('/css/modalStyle.css')}}" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dynamic Fields</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="{{asset('/css/methodStyle.css')}}">
+    <link rel="stylesheet" href="{{asset('/css/tableStyle.css')}}">
+    
 
 
-<style>
-    .card-header {
-        position: relative;
-    }
-
-    .card-header .btn {
-        position: absolute;
-        top: 1;
-        right: 20px;
-    }
-</style>
+</head>
 
 <body>
+    @include('includes.alerts')
+
     <div class="main-content">
         <div class="container mt-7">
             @include('includes.alerts')
@@ -28,49 +26,38 @@
                 <div class="col">
                     <div class="card shadow">
                         <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                            <h3 class="mb-0">Users</h3>
-                            <button class="button-1" data-bs-toggle="modal" data-bs-target="#addNewUserModal">
-                                <i class='bx bx-user-plus'></i> Add New User
-                            </button>
-                            @include('modals.addNewUserModal')
+                            <h3 class="mb-0">Withdraw Methods</h3>
+                            <a href="{{route('admin.withdrawMethod.create')}}" class="button-1" style="color: black;">
+                                <i class='bx bx-user-plus'></i> Add New Method
+                            </a>
+
                         </div>
 
                         <div class="table-responsive">
                             <table class="table align-items-center table-flush">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th scope="col">User</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Balance</th>
+                                        <th scope="col">Name</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Action</th>
-                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
-                                    @forelse($users as $user)
+                                    @forelse($withdrawMethods as $withdrawMethod)
                                     <tr>
                                         <th scope="row">
                                             <div class="media align-items-center">
-                                                <a href="#" class="avatar rounded-circle mr-3">
-                                                    <img alt="Image placeholder" src="{{url('/uploads/user/'.$user->image)}}">
-                                                </a>
                                                 <div class="media-body">
-                                                    <span class="mb-0 text-sm">{{$user->name}}</span>
+                                                    <span class="mb-0 text-sm">{{$withdrawMethod->name}}</span>
                                                 </div>
                                             </div>
                                         </th>
                                         <td>
-                                            {{$user->email}}
-                                        </td>
-                                        <td>
-                                            {{$user->balance}}
-                                        </td>
-                                        <td>
+
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheck{{ $user->id }}" data-user-id="{{ $user->id }}" {{ ($user->is_active == true) ? 'checked' : 'unchecked' }}>
-                                                <label class="form-check-label" for="switchCheck{{ $user->id }}">{{ ($user->is_active == true) ? "Active" : "Deactive" }}</label>
+                                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheck{{ $withdrawMethod->id }}" data-withdraw-method-id="{{ $withdrawMethod->id }}" {{ ($withdrawMethod->is_active == true) ? 'checked' : 'unchecked' }}>
+                                                <label class="form-check-label" for="switchCheck{{ $withdrawMethod->id }}">{{ ($withdrawMethod->is_active == true) ? "Active" : "Deactive" }}</label>
                                             </div>
 
                                         </td>
@@ -78,34 +65,22 @@
                                         <td>
 
                                             <div class="d-flex align-items-center">
-                                                <button class="btn btn-primary-sm" data-bs-toggle="modal" data-bs-target="#editUserInfoModal{{$user->id}}">
+                                                <a href="{{route('admin.withdrawMethod.edit' , ['id' => $withdrawMethod->id])}}" button class="btn btn-primary-sm" style="color: black;">
                                                     <i class="bx bx-edit-alt"></i>
-                                                </button>
+                                                    </button></a>
 
-                                                <button class="btn btn-primary-sm" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{$user->id}}">
+                                                <button class="btn btn-primary-sm" data-bs-toggle="modal" data-bs-target="#deletewithdrawMethodModal{{$withdrawMethod->id}}">
                                                     <i class='bx bx-trash-alt'></i>
                                                 </button>
+                                                @include('modals.deletewithdrawMethodModal')
                                             </div>
-                                            @include('modals.editUserInfoModal')
-                                            @include('modals.deleteUserModal')
 
                                         </td>
-                                        <td class="text-right">
-                                            <div class="dropdown">
-                                                <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else here</a>
-                                                </div>
-                                            </div>
-                                        </td>
+
                                     </tr>
                                     @empty
                                     <tr>
-                                        <p>No user Data Found</p>
+                                        <p>No withdrawMethod Data Found</p>
                                     </tr>
                                     @endforelse
                                 </tbody>
@@ -114,9 +89,9 @@
                         <div class="card-footer py-4">
                             <nav aria-label="...">
                                 <ul class="pagination justify-content-end mb-0">
-                                    @if ($users->previousPageUrl())
+                                    @if ($withdrawMethods->previousPageUrl())
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ $users->previousPageUrl() }}" tabindex="-1">
+                                        <a class="page-link" href="{{ $withdrawMethods->previousPageUrl() }}" tabindex="-1">
                                             <i class="fa fa-angle-left"></i>
                                             <span class="sr-only">Previous</span>
                                         </a>
@@ -130,15 +105,15 @@
                                     </li>
                                     @endif
 
-                                    @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
-                                    <li class="page-item {{ ($users->currentPage() == $page) ? 'active' : '' }}">
+                                    @foreach ($withdrawMethods->getUrlRange(1, $withdrawMethods->lastPage()) as $page => $url)
+                                    <li class="page-item {{ ($withdrawMethods->currentPage() == $page) ? 'active' : '' }}">
                                         <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                                     </li>
                                     @endforeach
 
-                                    @if ($users->nextPageUrl())
+                                    @if ($withdrawMethods->nextPageUrl())
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ $users->nextPageUrl() }}">
+                                        <a class="page-link" href="{{ $withdrawMethods->nextPageUrl() }}">
                                             <i class="fa fa-angle-right"></i>
                                             <span class="sr-only">Next</span>
                                         </a>
@@ -160,33 +135,38 @@
             </div>
         </div>
     </div>
-</body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+
+</html>
 @endsection
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
         $('.form-check-input').change(function() {
-            var userId = $(this).data('user-id'); 
+            var withdrawMethodId = $(this).data('withdraw-method-id');
             var isChecked = this.checked ? 1 : 0;
             var label = isChecked ? 'Active' : 'Deactive';
             $(this).siblings('.form-check-label').text(label);
 
             $.ajax({
-                url: '{{ route("admin.updateActiveStatus") }}',
+                url: '{{ route("admin.withdrawMethod.updateActiveStatus") }}',
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
-                    user_id: userId,
-                    is_active: isChecked
+                    withdrawMethod_id: withdrawMethodId,
+                    is_active: isChecked,
+                    
                 },
+                
                 success: function(response) {
-                    console.log('User active status updated successfully.');
+                    console.log('withdrawMethod active status updated successfully.');
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error updating user active status:', error);
+                    console.error('Error updating withdrawMethod active status:', error);
                 }
             });
         });

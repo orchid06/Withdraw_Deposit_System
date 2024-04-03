@@ -6,8 +6,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\Auth\LoginController;
-use App\Http\Controllers\DepositController;
-use App\Http\Controllers\WithdrawController;
+use App\Http\Controllers\Deposit\DepositMethodController;
+use App\Http\Controllers\Deposit\DepositRequestController;
+use App\Http\Controllers\Withdraw\WithdrawRequestController;
+use App\Http\Controllers\Withdraw\WithdrawMethodController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,22 +45,22 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::get('/home',    [UserController::class, 'index'])->name('index');
         Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
-        Route::post('/deposit/request/{userId}', [DepositController::class, 'depositRequest'])->name('depositRequest');
-        Route::post('/withdraw/request/{userId}', [WithdrawController::class, 'withdrawRequest'])->name('withdrawRequest');
+        Route::post('/deposit/request/{userId}', [DepositRequestController::class, 'depositRequest'])->name('depositRequest');
+        Route::post('/withdraw/request/{userId}', [WithdrawRequestController::class, 'withdrawRequest'])->name('withdrawRequest');
         Route::get('/transactionLog',    [UserController::class, 'transactionLog'])->name('transactionLog');
     });
 });
 
 Route::prefix('email')->name('verification.')->group(function () {
 
-    Route::get('/email/verify', [VerificationController::class, 'show'])->name('notice');
-    Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware(['signed', 'throttle:6,1'])->name('verify');
-    Route::post('/email/verify/{id}', [VerificationController::class, 'verifyWithCode'])->name('withCode');
-    Route::post('/email/verification-notification', [VerificationController::class, 'sendVerificationEmail'])->middleware(['auth', 'throttle:6,1'])->name('send');
-    Route::get('/email/verify-resend', [VerificationController::class, 'resend'])->name('resend');
+    Route::get('/verify',             [VerificationController::class, 'show'])->name('notice');
+    Route::get('/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware(['signed', 'throttle:6,1'])->name('verify');
+    Route::post('/verify/{id}',       [VerificationController::class, 'verifyWithCode'])->name('withCode');
+    Route::post('/verification-notification', [VerificationController::class, 'sendVerificationEmail'])->middleware(['auth', 'throttle:6,1'])->name('send');
+    Route::get('/verify-resend',      [VerificationController::class, 'resend'])->name('resend');
 });
 
-Route::prefix('admin')->name('admin.')->group(function (){
+Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware(['guest:admin'])->group(function () {
 
@@ -72,22 +74,42 @@ Route::prefix('admin')->name('admin.')->group(function (){
         Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
-        Route::get('/methods', [AdminController::class, 'methods'])->name('methods');
-        
-        Route::get('/users', [AdminController::class, 'userList'])->name('userList');
-        Route::post('/user/create', [AdminController::class, 'store'])->name('userCreate');
-        Route::post('/user/edit/{userId}', [AdminController::class, 'edit'])->name('userEdit');
-        Route::get('/user/delete/{userId}', [AdminController::class, 'delete'])->name('userDelete');
-        Route::get('/update-user-active-status' , [AdminController::class, 'updateActiveStatus'])->name('updateActiveStatus');
-        Route::post('/update-deposit-status' , [DepositController::class, 'updateDepositStatus'])->name('updateDepositStatus');
-        Route::post('/update-withdraw-status' , [WithdrawController::class, 'updateWithdrawStatus'])->name('updateWithdrawStatus');
 
-        Route::get('/deposit/create/methods', [DepositController::class, 'createDepositMethod'])->name('createDepositMethod');
-        Route::get('/deposit/edit/methods/{id}', [DepositController::class, 'editDepositMethod'])->name('editDepositMethod');
-        Route::get('/deposit/delete/methods/{id}', [DepositController::class, 'deleteDepositMethod'])->name('deleteDepositMethod');
-        Route::post('/store/deposit/ethods', [DepositController::class, 'storeDepositMethod'])->name('storeDepositMethod');
-        Route::post('/update/depost/methods/{id}', [DepositController::class, 'updateDepositMethod'])->name('updateDepositMethod');
-        
+
+        Route::prefix('user')->group(function () {
+
+            Route::get('/',                      [AdminController::class, 'userList'])->name('userList');
+            Route::post('/create',               [AdminController::class, 'store'])->name('userCreate');
+            Route::post('/edit/{userId}',        [AdminController::class, 'edit'])->name('userEdit');
+            Route::get('/delete/{userId}',       [AdminController::class, 'delete'])->name('userDelete');
+            Route::post('/update-active-status', [AdminController::class, 'updateActiveStatus'])->name('updateActiveStatus');
+        });
+
+        Route::post('/update-deposit-status', [DepositRequestController::class, 'updateDepositStatus'])->name('updateDepositStatus');
+        Route::post('/update-withdraw-status', [WithdrawRequestController::class, 'updateWithdrawStatus'])->name('updateWithdrawStatus');
+
+        Route::prefix('deposit/methods')->name('depositMethod.')->group(function () {
+            $controller = DepositMethodController::class;
+
+            Route::get('/',             [$controller, 'index'])->name('index');
+            Route::get('/create',       [$controller, 'create'])->name('create');
+            Route::get('/edit/{id}',    [$controller, 'edit'])->name('edit');
+            Route::get('/delete/{id}',  [$controller, 'delete'])->name('delete');
+            Route::post('/store',       [$controller, 'store'])->name('store');
+            Route::post('/update/{id}', [$controller, 'update'])->name('update');
+            Route::post('/status',      [$controller, 'updateActiveStatus'])->name('updateActiveStatus');
+        });
+
+        Route::prefix('withdraw/methods')->name('withdrawMethod.')->group(function () {
+            $controller = WithdrawMethodController::class;
+
+            Route::get('/',             [$controller, 'index'])->name('index');
+            Route::get('/create',       [$controller, 'create'])->name('create');
+            Route::get('/edit/{id}',    [$controller, 'edit'])->name('edit');
+            Route::get('/delete/{id}',  [$controller, 'delete'])->name('delete');
+            Route::post('/store',       [$controller, 'store'])->name('store');
+            Route::post('/update/{id}', [$controller, 'update'])->name('update');
+            Route::post('/status',      [$controller, 'updateActiveStatus'])->name('updateActiveStatus');
+        });
     });
 });
-

@@ -11,7 +11,7 @@
 
     <!----===== Boxicons CSS ===== -->
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
-    
+
 </head>
 
 <body>
@@ -57,23 +57,23 @@
                     </li>
 
                     <li class="nav-link">
-                        <a href="/admin/methods">
-                            <i class='bx bx-customize icon'></i>
-                            <span class="text nav-text">Custom Methods</span>
+                        <a href="/admin/deposit/methods">
+                            <i class='bx bx-message-alt-add icon'></i>
+                            <span class="text nav-text">Deposit Methods</span>
                         </a>
                     </li>
 
                     <li class="nav-link">
-                        <a href="/admin/users">
+                        <a href="/admin/withdraw/methods">
+                            <i class='bx bx-money-withdraw icon'></i>
+                            <span class="text nav-text">Withdraw Methods</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="/admin/user">
                             <i class='bx bx-user icon'></i>
                             <span class="text nav-text">Users</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="#">
-                            <i class='bx bx-heart icon'></i>
-                            <span class="text nav-text">Likes</span>
                         </a>
                     </li>
 

@@ -1,50 +1,38 @@
-
-<link rel="stylesheet" href="{{asset('/css/depositModalStyle.css')}}">
-
-<!--Deposit Modal -->
+<link rel="stylesheet" href="{{asset('css/depositStyle.css')}}">
+<!-- Deposit Modal -->
 <div class="modal fade" id="depositModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Deposit</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{route('user.depositRequest', ['userId'=>Auth::user()->id])}}" method="POST">
-                @csrf
-                <div class="modal-body">
+            <div class="user-card">
+                <div class="user-info">
+                    <h2 class="name">{{$user->name}}</h2>
+                    <p class="email">{{$user->email}}</p>
+                    <p class="balance"><strong>Balance:</strong> {{$user->balance}}</p>
+                </div>
 
-                    <div class="row mb-3">
-                        <label for="deposit_request" class="col-sm-5 col-form-label">
-                            <h5>Deposit Amount:</h5>
-                        </label>
-                        <div class="col-sm-5">
-                            <input type="number" class="form-control" id="deposit_request" name="deposit_request">
-                        </div>
-                        <div class="col-sm-5">
-                            
-                        </div>
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                            Select a method
-                        </button>
-
-                        <div class="dropdown">
-                            
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                @foreach($depositMethods as $depositMethod)
-                                <li><button class="dropdown-item" type="button">{{$depositMethod->name}}</button></li>
-                                @endforeach
-                            </ul>
-                        </div>
-
-                        <p> Mimimum Deposit : {{$depositMethod->min}}<br> Maximum Deposit : {{$depositMethod->max}}</p>
+                <form action="{{route('user.depositRequest' , ['userId' =>$user->id])}}" method="post">
+                    @csrf
+                    <div class="deposit">
+                        <input type="number" id="deposit_amount" name="deposit_amount" placeholder="Enter deposit amount">
                     </div>
+                    <div class="selector">
+                        <select id="method" name="method" class="custom-select">
+                            @foreach($depositMethods as $depositMethod)
+                            <option value="{{$depositMethod->id}}" data-fields="{{ json_encode($depositMethod->fields)}}">{{$depositMethod->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div id="additional-fields">
+                        <!-- Additional fields goes here -->
+                    </div>
+                    <div class="submit">
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Deposit</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="{{asset('/js/depositScript.js')}}"></script>
