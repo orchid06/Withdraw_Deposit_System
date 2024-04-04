@@ -1188,13 +1188,6 @@ a.text-light:focus {
     margin-left: -1rem;
 }
 
-.badge {
-    text-transform: uppercase;
-}
-
-.badge a {
-    color: #fff;
-}
 
 .btn .badge:not(:first-child) {
     margin-left: .5rem;
@@ -1204,7 +1197,7 @@ a.text-light:focus {
     margin-right: .5rem;
 }
 
-.badge-dot {
+.badge .badge-dot {
     font-size: .875rem;
     font-weight: 400;
     padding-right: 0;
@@ -1213,11 +1206,11 @@ a.text-light:focus {
     background: transparent;
 }
 
-.badge-dot strong {
+.badge .badge-dot strong {
     color: #32325d;
 }
 
-.badge-dot i {
+.badge .badge-dot i {
     display: inline-block;
     width: .375rem;
     height: .375rem;

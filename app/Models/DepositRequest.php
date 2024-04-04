@@ -10,7 +10,7 @@ class DepositRequest extends Model
     use HasFactory;
 
     protected $table    = 'deposit_requests'; 
-    protected $fillable = ['user_id' , 'deposit_method_id', 'amount', 'status', 'feedback'];
+    protected $fillable = ['user_id' , 'deposit_method_id', 'amount', 'fields', 'status', 'feedback'];
 
     protected $cast     = [ 'status' => 'string'];
 

@@ -10,7 +10,7 @@ class WithdrawRequest extends Model
     use HasFactory;
 
     protected $table    = 'withdraw_requests'; 
-    protected $fillable = ['user_id', 'withdraw_method_id', 'amount', 'status', 'feedback'];
+    protected $fillable = ['user_id', 'withdraw_method_id', 'amount','fields', 'status', 'feedback'];
 
     protected $casts    = [ 'status' => 'string' ];
 

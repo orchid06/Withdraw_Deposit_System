@@ -1,4 +1,4 @@
-document.getElementById('deposit-method').addEventListener('change', function () {
+document.getElementById('withdraw-method').addEventListener('change', function () {
     const selectedMethod = this.value;
     const methodOptions = this.querySelectorAll('option');
     let selectedMethodFields = null;
@@ -25,7 +25,7 @@ document.getElementById('deposit-method').addEventListener('change', function ()
                 <input type="${field.input_type}" name="${field.label_name}" class="form-control" ${field.condition == 1 ? 'required' : ''}>
             `;
             fieldElement.style.marginBottom = '10px'
-            document.getElementById('additional-fields-deposit').appendChild(fieldElement);
+            document.getElementById('additional-fields').appendChild(fieldElement);
         });
     }
 });

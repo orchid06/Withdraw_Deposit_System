@@ -1,24 +1,44 @@
 <?php
 
-namespace App\Http\Controllers\Withdraw;
+namespace App\Http\Controllers\User;
 
 use App\Models\WithdrawRequest;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
+use App\Models\WithdrawMethod;
+use Illuminate\Http\RedirectResponse;
 
 class WithdrawRequestController extends Controller
 {
-    public function withdrawRequest(Request $request, int $userId)
+    public function withdrawRequest(Request $request, int $userId): RedirectResponse
     {
-        WithdrawRequest::create([
-            'user_id' => $userId,
-            'amount'  => $request->input('withdraw_request')
+        $withdrawMethodId = $request->input('withdraw_method_id');
+        $withdrawMethod   = WithdrawMethod::findorfail($withdrawMethodId);
+        $min              = $withdrawMethod->min;
+        $max              = $withdrawMethod->max;
+
+        $request->validate([
+
+            'amount' => "required|numeric|min:$min|max:$max"
         ]);
 
-        return back()->with('success', 'Withdraw Successful');
+        $fieldsJson = $withdrawMethod->fields;
+
+        $fieldsArray = json_decode($fieldsJson, true);
+        $inputData = $request->only(array_column($fieldsArray, 'label_name'));
+
+        WithdrawRequest::create([
+            'user_id'           => $userId,
+            'withdraw_method_id' => $withdrawMethodId,
+            'amount'            => $request->input('amount'),
+            'fields'            => json_encode($inputData),
+        ]);
+
+        return back()->with('success', 'withdraw Successful');
     }
+
 
     public function updateWithdrawStatus(Request $request)
     {

@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\Auth\LoginController;
-use App\Http\Controllers\Deposit\DepositMethodController;
-use App\Http\Controllers\Deposit\DepositRequestController;
-use App\Http\Controllers\Withdraw\WithdrawRequestController;
-use App\Http\Controllers\Withdraw\WithdrawMethodController;
+use App\Http\Controllers\Admin\DepositMethodController;
+use App\Http\Controllers\User\DepositRequestController;
+use App\Http\Controllers\User\WithdrawRequestController;
+use App\Http\Controllers\Admin\WithdrawMethodController;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,8 +72,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/home', [AdminController::class, 'index'])->name('index');
         Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-
-        Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
+        Route::get('transaction/logs', [AdminController::class, 'transactionLog']);
 
 
         Route::prefix('user')->group(function () {
@@ -98,6 +97,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/store',       [$controller, 'store'])->name('store');
             Route::post('/update/{id}', [$controller, 'update'])->name('update');
             Route::post('/status',      [$controller, 'updateActiveStatus'])->name('updateActiveStatus');
+            Route::get('/logs',         [$controller, 'logs'])->name('logs');
         });
 
         Route::prefix('withdraw/methods')->name('withdrawMethod.')->group(function () {
@@ -110,6 +110,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/store',       [$controller, 'store'])->name('store');
             Route::post('/update/{id}', [$controller, 'update'])->name('update');
             Route::post('/status',      [$controller, 'updateActiveStatus'])->name('updateActiveStatus');
+            Route::get('/logs',         [$controller, 'logs'])->name('logs');
         });
     });
 });

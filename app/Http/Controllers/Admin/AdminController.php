@@ -45,19 +45,7 @@ class AdminController extends Controller
             'totalWithdraw',
             'totalBalance'
         ));
-    }
-
-    public function logs(): View
-    {
-        $users           = User::with('transactionLogs');
-        $depositLogs     = DepositRequest::with('user')->paginate(4);
-        $withdrawLogs    = WithdrawRequest::with('user')->paginate(4);
-        $transactionLogs = TransactionLog::with('user')->paginate(4);
-
-        return view('dashboard.admin.logs', compact('users', 'depositLogs', 'withdrawLogs', 'transactionLogs'));
-    }
-
-    
+    }  
 
     public function userList(): View
     {
@@ -78,15 +66,14 @@ class AdminController extends Controller
 
         ]);
 
-        $imageName      = $request->hasFile('image')
-            ? $this->uploadImage($request->file('image'))
-            : null;
-
+  
         User::create([
             'name'              => $request->input('name'),
             'email'             => $request->input('email'),
             'password'          => $request->input('password'),
-            'image'             => @$imageName,
+            'image'             => $request->hasFile('image')
+                                        ? $this->uploadImage($request->file('image'))
+                                        : null,
         ]);
 
         return back()->with('success', 'User Added');
@@ -107,16 +94,13 @@ class AdminController extends Controller
 
 
 
-
-        $imageName      = $request->hasFile('image')
-            ? $this->uploadImage($request->file('image'))
-            : null;
-
         $user->update([
             'name'              => $request->input('name'),
             'email'             => $request->input('email'),
             'password'          => $request->input('password') ?? $user->password,
-            'image'             => @$imageName,
+            'image'             => $request->hasFile('image')
+                                    ? $this->uploadImage($request->file('image'))
+                                    : $user->image,
         ]);
 
         return back()->with('success', 'User info Updated');
@@ -139,7 +123,13 @@ class AdminController extends Controller
             ]);
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to update user active status'], 500);
+            return response()->json(['error' => strip_tags($e->getMessage())], 500);
         }
+    }
+
+    public function transactionLog()
+    {
+        $transactionLogs = TransactionLog::paginate(4);
+        return view('dashboard.admin.transactionLog' , compact('transactionLogs'));
     }
 }

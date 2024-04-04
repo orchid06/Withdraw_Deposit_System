@@ -12,6 +12,7 @@ use App\Models\DepositRequest;
 use App\Models\WithdrawRequest;
 use Illuminate\Contracts\View\View;
 use App\Models\TransactionLog;
+use App\Models\WithdrawMethod;
 
 class UserController extends Controller
 {
@@ -81,10 +82,9 @@ class UserController extends Controller
 
     public function index()
     {
-        $user           = Auth::user();
-        // $depositMethod = $user->depositRequests->first()->depositMethod;
-
-        $depositMethods = DepositMethod::get();
+        $user               = Auth::user();
+        $depositMethods     = DepositMethod::get();
+        $withdrawMethods    = WithdrawMethod::get();
 
         $isVerified = $user->email_verified_at;
 
@@ -92,7 +92,7 @@ class UserController extends Controller
             return redirect()->route('verification.notice')->with('error', 'Please verify you email');
         }
 
-        return view('dashboard.user.home', compact('user', 'depositMethods'));
+        return view('dashboard.user.home', compact('user', 'depositMethods' ,'withdrawMethods' ));
     }
 
     public function transactionLog()

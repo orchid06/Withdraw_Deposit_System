@@ -50,13 +50,6 @@
                     </li>
 
                     <li class="nav-link">
-                        <a href="/admin/logs">
-                            <i class='bx bx-bar-chart-alt-2 icon'></i>
-                            <span class="text nav-text">Logs</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-link">
                         <a href="/admin/deposit/methods">
                             <i class='bx bx-message-alt-add icon'></i>
                             <span class="text nav-text">Deposit Methods</span>
@@ -78,8 +71,22 @@
                     </li>
 
                     <li class="nav-link">
-                        <a href="#">
+                        <a href="/admin/deposit/methods/logs">
+                            <i class='bx bx-bar-chart-alt-2 icon'></i>
+                            <span class="text nav-text">Deposit Logs</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="/admin/withdraw/methods/logs">
                             <i class='bx bx-wallet icon'></i>
+                            <span class="text nav-text">Wallets</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="/admin/transaction/logs">
+                            <i class='bx bxs-bank icon'></i>
                             <span class="text nav-text">Wallets</span>
                         </a>
                     </li>

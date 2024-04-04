@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DepositMethod extends Model
 {
@@ -13,7 +14,7 @@ class DepositMethod extends Model
     protected $fillable = ['name', 'is_active', 'fields', 'min' , 'max'];
     protected $cast     = ['is_active' => 'boolean'];
 
-    public function deposit_request()
+    public function deposit_request() : HasMany
     {
         return $this->hasMany(DepositRequest::class);
     }

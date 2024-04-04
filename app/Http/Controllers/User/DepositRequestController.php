@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Deposit;
+namespace App\Http\Controllers\User;
 
 use App\Models\DepositMethod;
 use App\Models\DepositRequest;
@@ -10,16 +10,32 @@ use Illuminate\Support\Str;
 use App\Models\TransactionLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
-use App\Models\User;
+
 
 class DepositRequestController extends Controller
 {
     public function depositRequest(Request $request, int $userId): RedirectResponse
     {
+        $depositMethodId = $request->input('deposit_method_id');
+        $depositMethod   = DepositMethod::findorfail($depositMethodId);
+        $min             = $depositMethod->min;
+        $max             = $depositMethod->max;
+
+        $request->validate([
+
+            'amount' => "required|numeric|min:$min|max:$max"
+        ]);
+
+        $fieldsJson = $depositMethod->fields;
+
+        $fieldsArray = json_decode($fieldsJson, true);
+        $inputData = $request->only(array_column($fieldsArray, 'label_name'));
+
         DepositRequest::create([
-            'user_id' => $userId,
-            'amount'  => $request->input('deposit_request')
+            'user_id'           => $userId,
+            'deposit_method_id' => $depositMethodId,
+            'amount'            => $request->input('amount'),
+            'fields'            => json_encode($inputData),
         ]);
 
         return back()->with('success', 'Deposit Successful');
@@ -48,13 +64,10 @@ class DepositRequestController extends Controller
                 ]);
                 break;
             case 'pending':
-
                 TransactionLog::destroyLog($userId, $trx_code);
                 break;
         }
 
         return response()->json(['message' => 'Deposit log updated successfully']);
     }
-
-    
 }

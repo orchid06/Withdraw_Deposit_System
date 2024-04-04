@@ -1,35 +1,36 @@
 <?php
 
-namespace App\Http\Controllers\Deposit;
+namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\DepositMethod;
+use Illuminate\Http\Request;
+use App\Models\WithdrawMethod;
 use App\Models\User;
+use App\Models\WithdrawRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
-class DepositMethodController extends Controller
+class WithdrawMethodController extends Controller
 {
     public function index()
     {
         $users = User::select('id', 'name')->get();
 
-        $depositMethods = DepositMethod::paginate(4);
+        $withdrawMethods = WithdrawMethod::paginate(4);
 
-
-        return view('dashboard.admin.depositMethods', compact('users', 'depositMethods'));
+        
+        return view('dashboard.admin.WithdrawMethods', compact('users', 'withdrawMethods'));
     }
 
     public function create(): View
     {
-        return view('dashboard.admin.createDepositMethod');
+        return view('dashboard.admin.createWithdrawMethod');
     }
 
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'deposit_method_name'  => 'required',
+            'withdraw_method_name' => 'required',
             'minimum_amount'       => 'required|numeric|gt:0',
             'maximum_amount'       => 'required|numeric|gt:minimum_amount'
         ]);
@@ -49,10 +50,10 @@ class DepositMethodController extends Controller
 
         $jsonFields = json_encode($fields);
 
-        DepositMethod::create([
+        WithdrawMethod::create([
 
-            'name'      => $request->input('deposit_method_name'),
-            'fields' => $jsonFields,
+            'name'      => $request->input('withdraw_method_name'),
+            'fields'    => $jsonFields,
             'min'       => $request->input('minimum_amount'),
             'max'       => $request->input('maximum_amount'),
 
@@ -63,22 +64,22 @@ class DepositMethodController extends Controller
 
     public function edit(int $id): View
     {
-        $depositMethod = DepositMethod::findorfail($id);
-        $existingFieldsCount = count(json_decode($depositMethod->fields));
+        $withdrawMethod = WithdrawMethod::findorfail($id);
+        $existingFieldsCount = count(json_decode($withdrawMethod->fields));
 
-        return view('dashboard.admin.editDepositMethod', compact('depositMethod', 'existingFieldsCount'));
+        return view('dashboard.admin.editWithdrawMethod', compact('withdrawMethod', 'existingFieldsCount'));
     }
 
     public function delete(int $id): RedirectResponse
     {
-        DepositMethod::findorfail($id)->delete();
+        WithdrawMethod::findorfail($id)->delete();
         return back()->with('success', 'Method Deleted');
     }
 
     public function update(Request $request, int $id)
     {
 
-        $depositMethod = DepositMethod::findorfail($id);
+        $WithdrawMethod = WithdrawMethod::findorfail($id);
 
         $data = $request->all();
 
@@ -93,9 +94,10 @@ class DepositMethodController extends Controller
 
         $jsonFields = json_encode($fields);
 
-        $depositMethod->update([
+        $WithdrawMethod->update([
 
-            'name'      => $request->input('deposit_method_name'),
+            
+            'name'      => $request->input('withdraw_method_name'),
             'fields'    => $jsonFields,
             'min'       => $request->input('minimum_amount'),
             'max'       => $request->input('maximum_amount'),
@@ -108,13 +110,21 @@ class DepositMethodController extends Controller
     {
         try {
 
-            $depositMethod = DepositMethod::findOrFail($request->input('depositMethod_id'));
-            $depositMethod->update([
+            $withdrawMethod = WithdrawMethod::findOrFail($request->input('withdrawMethod_id'));
+            $withdrawMethod->update([
                 'is_active' => $request->input('is_active')
             ]);
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to update Method active status'], 500);
+            return response()->json(['error' => strip_tags($e->getMessage())], 500);
         }
+    }
+
+    public function logs(): View
+    {
+        $users           = User::with('transactionLogs');
+        $withdrawLogs     = WithdrawRequest::with('user')->paginate(4);
+
+        return view('dashboard.admin.withdrawLogs', compact('users', 'withdrawLogs'));
     }
 }

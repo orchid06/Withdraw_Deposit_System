@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{asset('css/depositStyle.css')}}">
+<link rel="stylesheet" href="{{asset('css/transactionStyle.css')}}">
 <!-- Deposit Modal -->
 <div class="modal fade" id="depositModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -12,17 +12,18 @@
 
                 <form action="{{route('user.depositRequest' , ['userId' =>$user->id])}}" method="post">
                     @csrf
-                    <div class="deposit">
-                        <input type="number" id="deposit_amount" name="deposit_amount" placeholder="Enter deposit amount">
+                    <div class="amount">
+                        <input type="number" id="amount" name="amount" placeholder="Enter deposit amount" required>
                     </div>
                     <div class="selector">
-                        <select id="method" name="method" class="custom-select">
+                        <select id="deposit-method" name="deposit_method_id" class="custom-select" required>
+                            <option value="" selected disabled>Select a method</option>
                             @foreach($depositMethods as $depositMethod)
-                            <option value="{{$depositMethod->id}}" data-fields="{{ json_encode($depositMethod->fields)}}">{{$depositMethod->name}}</option>
+                            <option value="{{ $depositMethod->id }}" data-fields="{{ $depositMethod->fields }}">{{ $depositMethod->name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div id="additional-fields">
+                    <div id="additional-fields-deposit">
                         <!-- Additional fields goes here -->
                     </div>
                     <div class="submit">

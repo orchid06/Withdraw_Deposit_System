@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users' , 'id')->onDelete('cascade');
             $table->foreignId('withdraw_method_id')->default(0)->constrained('withdraw_methods' , 'id')->onDelete('cascade');
             $table->double('amount');
+            $table->json('fields');
             $table->enum('status' , ['pending', 'approved' , 'rejected'])->default('pending');
             $table->longText('feedback')->nullable();
             $table->timestamps();

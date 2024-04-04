@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users' , 'id')->onDelete('cascade');
             $table->foreignId('deposit_method_id')->default(1)->constrained('deposit_methods' , 'id')->onDelete('cascade');
-            $table->double('amount');
+            $table->double('amount',20,8);
+            $table->json('fields');
             $table->enum('status' , ['pending', 'approved' , 'rejected'])->default('pending');
             $table->longText('feedback')->nullable();
             $table->timestamps();
