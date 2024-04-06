@@ -66,7 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(DepositRequest::class);
     }
 
-    public function transactionLogs()
+    public function transactionLog()
     {
         return $this->hasMany(TransactionLog::class);
     }

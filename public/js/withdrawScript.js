@@ -21,7 +21,7 @@ document.getElementById('withdraw-method').addEventListener('change', function (
             const fieldElement = document.createElement('div');
             const capitalizedLabel = field.label_name.charAt(0).toUpperCase() + field.label_name.slice(1);
             fieldElement.innerHTML = `
-                <label>${capitalizedLabel}</label>
+                <label>${capitalizedLabel}<span class="${field.condition == 1 ? 'required' : ''}"></span></label>
                 <input type="${field.input_type}" name="${field.label_name}" class="form-control" ${field.condition == 1 ? 'required' : ''}>
             `;
             fieldElement.style.marginBottom = '10px'

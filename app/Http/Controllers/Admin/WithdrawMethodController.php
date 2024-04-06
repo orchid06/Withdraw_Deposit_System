@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use App\Models\WithdrawMethod;
 use App\Models\User;
 use App\Models\WithdrawRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class WithdrawMethodController extends Controller
 {
-    public function index()
+    public function index():View
     {
         $users = User::select('id', 'name')->get();
 
@@ -20,11 +21,6 @@ class WithdrawMethodController extends Controller
 
         
         return view('dashboard.admin.WithdrawMethods', compact('users', 'withdrawMethods'));
-    }
-
-    public function create(): View
-    {
-        return view('dashboard.admin.createWithdrawMethod');
     }
 
     public function store(Request $request): RedirectResponse
@@ -41,9 +37,9 @@ class WithdrawMethodController extends Controller
 
         for ($i = 0; isset($data["label_name_$i"]); $i++) {
             $fields[] = [
-                'label_name' => $data["label_name_$i"],
-                'input_type' => $data["input_type_$i"],
-                'condition' => $data["condition_$i"]
+                'label_name'     => $data["label_name_$i"],
+                'input_type'     => $data["input_type_$i"],
+                'condition'      => $data["condition_$i"]
             ];
         }
 
@@ -52,10 +48,10 @@ class WithdrawMethodController extends Controller
 
         WithdrawMethod::create([
 
-            'name'      => $request->input('withdraw_method_name'),
-            'fields'    => $jsonFields,
-            'min'       => $request->input('minimum_amount'),
-            'max'       => $request->input('maximum_amount'),
+            'name'              => $request->input('withdraw_method_name'),
+            'fields'            => $jsonFields,
+            'min'               => $request->input('minimum_amount'),
+            'max'               => $request->input('maximum_amount'),
 
         ]);
 
@@ -64,8 +60,8 @@ class WithdrawMethodController extends Controller
 
     public function edit(int $id): View
     {
-        $withdrawMethod = WithdrawMethod::findorfail($id);
-        $existingFieldsCount = count(json_decode($withdrawMethod->fields));
+        $withdrawMethod       = WithdrawMethod::findorfail($id);
+        $existingFieldsCount  = count(json_decode($withdrawMethod->fields));
 
         return view('dashboard.admin.editWithdrawMethod', compact('withdrawMethod', 'existingFieldsCount'));
     }
@@ -76,7 +72,7 @@ class WithdrawMethodController extends Controller
         return back()->with('success', 'Method Deleted');
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id):RedirectResponse
     {
 
         $WithdrawMethod = WithdrawMethod::findorfail($id);
@@ -86,9 +82,9 @@ class WithdrawMethodController extends Controller
         $fields = [];
         for ($i = 0; isset($data["label_name_$i"]); $i++) {
             $fields[] = [
-                'label_name' => $data["label_name_$i"],
-                'input_type' => $data["input_type_$i"],
-                'condition'  => $data["condition_$i"]
+                'label_name'    => $data["label_name_$i"],
+                'input_type'    => $data["input_type_$i"],
+                'condition'     => $data["condition_$i"]
             ];
         }
 
@@ -97,16 +93,16 @@ class WithdrawMethodController extends Controller
         $WithdrawMethod->update([
 
             
-            'name'      => $request->input('withdraw_method_name'),
-            'fields'    => $jsonFields,
-            'min'       => $request->input('minimum_amount'),
-            'max'       => $request->input('maximum_amount'),
+            'name'          => $request->input('withdraw_method_name'),
+            'fields'        => $jsonFields,
+            'min'           => $request->input('minimum_amount'),
+            'max'           => $request->input('maximum_amount'),
         ]);
 
         return back()->with('success', 'Deposit Method updated');
     }
 
-    public function updateActiveStatus(Request $request)
+    public function updateActiveStatus(Request $request):JsonResponse
     {
         try {
 
@@ -122,8 +118,8 @@ class WithdrawMethodController extends Controller
 
     public function logs(): View
     {
-        $users           = User::with('transactionLogs');
-        $withdrawLogs     = WithdrawRequest::with('user')->paginate(4);
+        $users             = User::with('transactionLogs');
+        $withdrawLogs      = WithdrawRequest::with('user')->paginate(4);
 
         return view('dashboard.admin.withdrawLogs', compact('users', 'withdrawLogs'));
     }

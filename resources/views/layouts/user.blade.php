@@ -13,6 +13,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&display=swap" rel="stylesheet">
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -42,7 +43,8 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
 
-        body, main {
+        body,
+        main {
             margin: 0 !important;
             padding: 0 !important;
         }
@@ -89,8 +91,7 @@
 
                             <div class="dropdown-menu dropdown-menu-end blur" aria-labelledby="navbarDropdown">
 
-                                <a class="dropdown-item" href="#" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                <a class="dropdown-item" href="{{route('user.profile' , ['id' => Auth::user()->id])}}">
                                     {{ __('Profile') }}
                                 </a>
 

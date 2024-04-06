@@ -42,8 +42,13 @@ Route::prefix('user')->name('user.')->group(function () {
 
     Route::middleware(['auth', 'user.verified'])->group(function () {
 
-        Route::get('/home',    [UserController::class, 'index'])->name('index');
-        Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+        Route::get('/home',                   [UserController::class, 'index'])->name('index');
+        Route::get('/profile/{id}',           [UserController::class, 'profile'])->name('profile');
+        Route::get('change/password/{id}',   [UserController::class, 'changePassword'])->name('changePassword');
+        Route::get('change/info/{id}',   [UserController::class, 'changeInfo'])->name('changeInfo');
+        Route::post('/update/password/{id}', [UserController::class, 'updatePassword'])->name('updatePassword');
+        Route::post('/update/info/{id}', [UserController::class, 'updateInfo'])->name('updateInfo');
+        Route::post('/logout',                [UserController::class, 'logout'])->name('logout');
 
         Route::post('/deposit/request/{userId}', [DepositRequestController::class, 'depositRequest'])->name('depositRequest');
         Route::post('/withdraw/request/{userId}', [WithdrawRequestController::class, 'withdrawRequest'])->name('withdrawRequest');
@@ -81,17 +86,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/create',               [AdminController::class, 'store'])->name('userCreate');
             Route::post('/edit/{userId}',        [AdminController::class, 'edit'])->name('userEdit');
             Route::get('/delete/{userId}',       [AdminController::class, 'delete'])->name('userDelete');
-            Route::post('/update-active-status', [AdminController::class, 'updateActiveStatus'])->name('updateActiveStatus');
         });
 
-        Route::post('/update-deposit-status', [DepositRequestController::class, 'updateDepositStatus'])->name('updateDepositStatus');
-        Route::post('/update-withdraw-status', [WithdrawRequestController::class, 'updateWithdrawStatus'])->name('updateWithdrawStatus');
+        Route::prefix('update/status/')->group(function () {
+
+            Route::post('/user',                   [AdminController::class, 'userActiveStatus'])->name('updateActiveStatus');
+            Route::post('/deposit',                [DepositRequestController::class, 'updateDepositStatus'])->name('updateDepositStatus');
+            Route::post('/withdraw', [WithdrawRequestController::class, 'updateWithdrawStatus'])->name('updateWithdrawStatus');
+        });
+
+
+
 
         Route::prefix('deposit/methods')->name('depositMethod.')->group(function () {
             $controller = DepositMethodController::class;
 
             Route::get('/',             [$controller, 'index'])->name('index');
-            Route::get('/create',       [$controller, 'create'])->name('create');
+            Route::view('/create',      'dashboard.admin.createDepositMethod')->name('create');
             Route::get('/edit/{id}',    [$controller, 'edit'])->name('edit');
             Route::get('/delete/{id}',  [$controller, 'delete'])->name('delete');
             Route::post('/store',       [$controller, 'store'])->name('store');
@@ -104,7 +115,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             $controller = WithdrawMethodController::class;
 
             Route::get('/',             [$controller, 'index'])->name('index');
-            Route::get('/create',       [$controller, 'create'])->name('create');
+            Route::view('/create',      'dashboard.admin.createWithdrawMethod')->name('create');
             Route::get('/edit/{id}',    [$controller, 'edit'])->name('edit');
             Route::get('/delete/{id}',  [$controller, 'delete'])->name('delete');
             Route::post('/store',       [$controller, 'store'])->name('store');

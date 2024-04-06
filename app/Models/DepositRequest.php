@@ -19,7 +19,7 @@ class DepositRequest extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function depositMethod()
+    public function depositMethods()
     {
         return $this-> belongsTo(DepositMethod::class);
     }

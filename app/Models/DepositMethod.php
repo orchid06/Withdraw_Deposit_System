@@ -14,7 +14,7 @@ class DepositMethod extends Model
     protected $fillable = ['name', 'is_active', 'fields', 'min' , 'max'];
     protected $cast     = ['is_active' => 'boolean'];
 
-    public function deposit_request() : HasMany
+    public function depositRequests() : HasMany
     {
         return $this->hasMany(DepositRequest::class);
     }

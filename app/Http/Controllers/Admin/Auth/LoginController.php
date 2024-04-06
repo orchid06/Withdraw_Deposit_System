@@ -4,13 +4,9 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use App\Models\DepositRequest;
-use App\Models\TransactionLog;
-use App\Models\WithdrawRequest;
+
 
 class LoginController extends Controller
 {

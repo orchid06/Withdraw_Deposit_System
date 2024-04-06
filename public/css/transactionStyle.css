@@ -102,3 +102,8 @@
 .custom-select::-ms-expand {
     display: none;
 }
+
+.required::after {
+    content: '*';
+    color: red;
+}

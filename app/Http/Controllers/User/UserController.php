@@ -8,11 +8,10 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Models\DepositMethod;
-use App\Models\DepositRequest;
-use App\Models\WithdrawRequest;
 use Illuminate\Contracts\View\View;
 use App\Models\TransactionLog;
 use App\Models\WithdrawMethod;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -27,7 +26,7 @@ class UserController extends Controller
     {
 
         $request->validate([
-            'name'      => 'required',
+            'name'      => 'required|max:200|unique:users,name',
             'email'     => 'required|email|unique:users,email',
             'image'     => 'image',
             'password'  => 'required|min:5|max:30',
@@ -92,10 +91,78 @@ class UserController extends Controller
             return redirect()->route('verification.notice')->with('error', 'Please verify you email');
         }
 
-        return view('dashboard.user.home', compact('user', 'depositMethods' ,'withdrawMethods' ));
+        return view('dashboard.user.home', compact('user', 'depositMethods', 'withdrawMethods'));
     }
 
-    public function transactionLog()
+    public function profile(int $id): View
+    {
+        $user = User::findorFail($id);
+        return view('dashboard.user.profile', compact('user'));
+    }
+
+    public function changePassword(int $id)
+    {
+
+        $user = User::findorFail($id);
+        return view('dashboard.user.changePassword', compact('user'));
+    }
+
+    public function changeInfo(int $id)
+    {
+
+        $user = User::findorFail($id);
+        return view('dashboard.user.changeInfo', compact('user'));
+    }
+
+    public function updatePassword(Request $request, int $id)
+    {
+        $request->validate([
+            'current_password'    => 'required',
+            'new_password'        => 'required|min:5|max:30',
+            'confirm_password'    => 'required|min:5|max:30|same:new_password'
+        ]);
+
+        $user = User::findorFail($id);
+
+        $currentPassword = $request->input('current_password');
+
+        if ($currentPassword && !Hash::check($currentPassword, $user->password)) {
+            return back()->with('error', 'Can not update password , Wrong Current Password ');
+        }
+
+        $user->update([
+            'password' => $request->input('new_password'),
+        ]);
+
+        return back()->with('success', 'Password Changed');
+    }
+
+    public function updateInfo(Request $request, int $id)
+    {
+
+        $request->validate([
+            'name'      => 'required|max:200|unique:users,name',
+            'email'     => 'required|email|unique:users,email',
+            'image'     => 'image',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        $imageName = $request->hasFile('image')
+            ? $this->uploadImage($request->file('image'))
+            : $user->image;
+
+        $user->update([
+            'name'      => $request->input('name')        ?? $user->name,
+            'email'     => $request->input('email')       ?? $user->email,
+            'image'     => $imageName,
+        ]);
+
+        return back()->with('success', 'User info Updated');
+    }
+
+
+    public function transactionLog(): View
     {
         $userId = Auth::user()->id;
         $transactionLogs = TransactionLog::where('user_id', $userId)->paginate(4);

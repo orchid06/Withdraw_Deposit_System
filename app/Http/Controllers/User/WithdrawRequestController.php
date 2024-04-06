@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\WithdrawMethod;
 use Illuminate\Http\RedirectResponse;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 
 class WithdrawRequestController extends Controller
 {
@@ -40,7 +42,7 @@ class WithdrawRequestController extends Controller
     }
 
 
-    public function updateWithdrawStatus(Request $request)
+    public function updateWithdrawStatus(Request $request):JsonResponse
     {
         $withdrawLogId = $request->input('withdrawLog_id');
         $status        = $request->input('status');
@@ -61,11 +63,16 @@ class WithdrawRequestController extends Controller
                     'amount'    => $withdrawLog->amount,
                     'trx_type'  => 'withdraw'
                 ]);
-                break;
-            case 'pending':
 
-                TransactionLog::destroyLog($userId, $trx_code);
+                $user = User::findOrFail($userId);
+                $user->balance -= $withdrawLog->amount;
+                $user->save();
                 break;
+                
+        // case 'pending':
+
+        //     TransactionLog::destroyLog($userId, $trx_code);
+        //     break;
         }
 
 

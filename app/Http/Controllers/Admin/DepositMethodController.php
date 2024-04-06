@@ -9,10 +9,11 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Models\DepositRequest;
+use Illuminate\Http\JsonResponse;
 
 class DepositMethodController extends Controller
 {
-    public function index()
+    public function index():View
     {
         $users = User::select('id', 'name')->get();
 
@@ -20,11 +21,6 @@ class DepositMethodController extends Controller
 
 
         return view('dashboard.admin.depositMethods', compact('users', 'depositMethods'));
-    }
-
-    public function create(): View
-    {
-        return view('dashboard.admin.createDepositMethod');
     }
 
     public function store(Request $request): RedirectResponse
@@ -41,19 +37,19 @@ class DepositMethodController extends Controller
 
         for ($i = 0; isset($data["label_name_$i"]); $i++) {
             $fields[] = [
-                'label_name' => $data["label_name_$i"],
-                'input_type' => $data["input_type_$i"],
-                'condition'  => $data["condition_$i"]
+                'label_name'      => $data["label_name_$i"],
+                'input_type'      => $data["input_type_$i"],
+                'condition'       => $data["condition_$i"]
             ];
         }
 
 
         DepositMethod::create([
 
-            'name'      => $request->input('deposit_method_name'),
-            'fields'    => json_encode($fields),
-            'min'       => $request->input('minimum_amount'),
-            'max'       => $request->input('maximum_amount'),
+            'name'               => $request->input('deposit_method_name'),
+            'fields'             => json_encode($fields),
+            'min'                => $request->input('minimum_amount'),
+            'max'                => $request->input('maximum_amount'),
 
         ]);
 
@@ -62,8 +58,8 @@ class DepositMethodController extends Controller
 
     public function edit(int $id): View
     {
-        $depositMethod = DepositMethod::findorfail($id);
-        $existingFieldsCount = count(json_decode($depositMethod->fields));
+        $depositMethod          = DepositMethod::findorfail($id);
+        $existingFieldsCount    = count(json_decode($depositMethod->fields));
 
         return view('dashboard.admin.editDepositMethod', compact('depositMethod', 'existingFieldsCount'));
     }
@@ -74,7 +70,7 @@ class DepositMethodController extends Controller
         return back()->with('success', 'Method Deleted');
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id):RedirectResponse
     {
 
         $depositMethod = DepositMethod::findorfail($id);
@@ -84,30 +80,30 @@ class DepositMethodController extends Controller
         $fields = [];
         for ($i = 0; isset($data["label_name_$i"]); $i++) {
             $fields[] = [
-                'label_name' => $data["label_name_$i"],
-                'input_type' => $data["input_type_$i"],
-                'condition'  => $data["condition_$i"]
+                'label_name'    => $data["label_name_$i"],
+                'input_type'    => $data["input_type_$i"],
+                'condition'     => $data["condition_$i"]
             ];
         }
 
         $depositMethod->update([
 
-            'name'      => $request->input('deposit_method_name'),
-            'fields'    => json_encode($fields),
-            'min'       => $request->input('minimum_amount'),
-            'max'       => $request->input('maximum_amount'),
+            'name'              => $request->input('deposit_method_name'),
+            'fields'            => json_encode($fields),
+            'min'               => $request->input('minimum_amount'),
+            'max'               => $request->input('maximum_amount'),
         ]);
 
         return back()->with('success', 'Deposit Method updated');
     }
 
-    public function updateActiveStatus(Request $request)
+    public function updateActiveStatus(Request $request):JsonResponse
     {
         try {
 
             $depositMethod = DepositMethod::findOrFail($request->input('depositMethod_id'));
             $depositMethod->update([
-                'is_active' => $request->input('is_active')
+                'is_active'     => $request->input('is_active')
             ]);
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
@@ -117,8 +113,8 @@ class DepositMethodController extends Controller
 
     public function logs(): View
     {
-        $users           = User::with('transactionLogs');
-        $depositLogs     = DepositRequest::with('user')->paginate(4);
+        $users              = User::with('transactionLogs');
+        $depositLogs        = DepositRequest::with('user')->paginate(4);
 
         return view('dashboard.admin.depositLogs', compact('users', 'depositLogs'));
     }

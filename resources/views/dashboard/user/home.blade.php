@@ -16,18 +16,20 @@
                         <p class="text-muted mb-4">{{$user->email}}</p>
                         <a href="{{route('user.transactionLog')}}" button type="button" class="btn btn-primary btn-rounded btn-lg">
                             Transactions Log
-                        </button></a>
+                            </button></a>
                         <div class="d-flex justify-content-between text-center mt-5 mb-2">
                             <div>
-                                <p class="mb-2 h5">$ 8471</p>
+                                <p class="mb-2 h5">$ {{ $user->depositRequests()->sum('amount') }}</p>
                                 <p class="text-muted mb-0">Total Deposit</p>
                             </div>
                             <div class="px-3">
-                                <p class="mb-2 h5">$ 8512 </p>
+                                <p class="mb-2 h5">$ {{ $user->withdrawRequests()->sum('amount') }} </p>
                                 <p class="text-muted mb-0">Total Withdraw</p>
                             </div>
                             <div>
-                                <p class="mb-2 h5">4751</p>
+                                <a href="{{route('user.transactionLog')}}" style="text-decoration: none; color: black;">
+                                    <p class="mb-2 h5">{{$user->transactionLog()->count()}}</p>
+                                </a>
                                 <p class="text-muted mb-0">Total Transactions</p>
                             </div>
                         </div>
@@ -42,7 +44,7 @@
                         <div class="flex-grow-1 ms-3">
                             <div class="d-flex flex-row justify-content-between align-items-center mb-2">
                                 <h4 class="mb-0">Current Balance:</h4>
-                                <h5 class="mb-0 fw-bold">{{$user->balance}}</h5>
+                                <h5 class="mb-0 fw-bold">$ {{$user->balance}}</h5>
                             </div>
 
                         </div>

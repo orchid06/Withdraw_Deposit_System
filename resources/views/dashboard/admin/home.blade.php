@@ -16,7 +16,7 @@
             <div class="card-block">
                 <h6 class="m-b-20">Deposit Request</h6>
                 <h2 class="text-right"><i class="fa fa-money f-left"></i><span>{{count($depositRequest)}}</span></h2>
-                <p class="m-b-0">Approved requests : <span class="f-right">351</span></p>
+                <p class="m-b-0">Approved requests : <span class="f-right">{{$approvedCountDeposit}}</span></p>
             </div>
         </div>
 
@@ -24,22 +24,22 @@
             <div class="card-block">
                 <h6 class="m-b-20">Withdraw Request</h6>
                 <h2 class="text-right"><i class="fa fa-money f-left"></i><span>{{count($withdrawRequest)}}</span></h2>
-                <p class="m-b-0">Approved requests : <span class="f-right">351</span></p>
+                <p class="m-b-0">Approved requests : <span class="f-right">{{$approvedCountWithdraw}}</span></p>
             </div>
         </div>
 
         <div class="card bg-c-pink order-card">
             <div class="card-block">
                 <h6 class="m-b-20">Total Deposit</h6>
-                <h2 class="text-right"><i class="fa fa-credit-card f-left"></i><span>{{$totalDeposit}}</span></h2>
-                <p class="m-b-0">Total Withdraw :<span class="f-right">{{$totalWithdraw}}</span></p>
+                <h2 class="text-right"><i class="fa fa-credit-card f-left"></i><span>{{$depositRequest->sum('amount')}}</span></h2>
+                <p class="m-b-0">Total Withdraw :<span class="f-right">{{$withdrawRequest->sum('amount')}}</span></p>
             </div>
         </div>
 
         <div class="card bg-c-green order-card">
             <div class="card-block">
                 <h6 class="m-b-20">Current Balance</h6>
-                <h2 class="text-right"><i class="fa fa-dollar f-left"></i><span>{{$totalBalance}}</span></h2>
+                <h2 class="text-right"><i class="fa fa-dollar f-left"></i><span>{{$users->sum('balance')}}</span></h2>
             </div>
         </div>
     </div>

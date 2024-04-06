@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users' , 'id')->onDelete('cascade');
+            $table->foreignId('user_id');
             $table->string('trx_code');
             $table->double('amount');
             $table->enum('trx_type' , ['withdraw' , 'deposit']);

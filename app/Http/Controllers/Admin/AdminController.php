@@ -4,17 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\DepositMethod;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\DepositRequest;
 use App\Models\TransactionLog;
-use App\Models\WithdrawMethod;
 use App\Models\WithdrawRequest;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
-use Illuminate\Support\Str;
+use Illuminate\Http\JsonResponse;
 
 class AdminController extends Controller
 {
@@ -29,21 +25,17 @@ class AdminController extends Controller
     {
         $users = User::with('depositRequests')->get();
 
-        $depositRequest  = DepositRequest::get();
-        $withdrawRequest = WithdrawRequest::get();
-
-        $totalDeposit     = $depositRequest->sum('amount');
-        $totalWithdraw    = $withdrawRequest->sum('amount');
-        $totalBalance     = $users->sum('balance');
-
+        $depositRequest        = DepositRequest::get();
+        $withdrawRequest       = WithdrawRequest::get();
+        $approvedCountDeposit  = DepositRequest::where('status', 'approved')->count();
+        $approvedCountWithdraw = WithdrawRequest::where('status', 'approved')->count();
 
         return view('dashboard.admin.home', compact(
-            'users',
-            'depositRequest',
-            'withdrawRequest',
-            'totalDeposit',
-            'totalWithdraw',
-            'totalBalance'
+                    'users',
+                    'depositRequest',
+                    'withdrawRequest',
+                    'approvedCountDeposit',
+                    'approvedCountWithdraw',          
         ));
     }  
 
@@ -58,7 +50,7 @@ class AdminController extends Controller
     {
         $request->validate([
 
-            'name'             => 'required',
+            'name'             => 'required|unique',
             'email'            => 'required|email|unique:users,email',
             'image'            => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'password'         => 'required|min:5|max:30',
@@ -106,14 +98,14 @@ class AdminController extends Controller
         return back()->with('success', 'User info Updated');
     }
 
-    public function delete(int $userId)
+    public function delete(int $userId):RedirectResponse
     {
         User::findOrFail($userId)->delete();
 
         return back()->with('success', 'User Deleted');
     }
 
-    public function updateActiveStatus(Request $request)
+    public function userActiveStatus(Request $request):JsonResponse
     {
         try {
 
@@ -127,7 +119,7 @@ class AdminController extends Controller
         }
     }
 
-    public function transactionLog()
+    public function transactionLog():View
     {
         $transactionLogs = TransactionLog::paginate(4);
         return view('dashboard.admin.transactionLog' , compact('transactionLogs'));

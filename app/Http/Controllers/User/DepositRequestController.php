@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\TransactionLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use App\Models\User;
 
 
 class DepositRequestController extends Controller
@@ -62,10 +63,17 @@ class DepositRequestController extends Controller
                     'amount'    => $depositLog->amount,
                     'trx_type'  => 'deposit'
                 ]);
+
+                $user = User::findOrFail($userId);
+                $user->balance += $depositLog->amount;
+                $user->save();
                 break;
-            case 'pending':
-                TransactionLog::destroyLog($userId, $trx_code);
-                break;
+
+
+
+        // case 'pending':
+        //     TransactionLog::where('user_id', $userId)
+        //                 ->delete();
         }
 
         return response()->json(['message' => 'Deposit log updated successfully']);
