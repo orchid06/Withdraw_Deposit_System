@@ -80,14 +80,14 @@
                     <li class="nav-link">
                         <a href="/admin/withdraw/methods/logs">
                             <i class='bx bx-wallet icon'></i>
-                            <span class="text nav-text">Wallets</span>
+                            <span class="text nav-text">WithdrawLog</span>
                         </a>
                     </li>
 
                     <li class="nav-link">
                         <a href="/admin/transaction/logs">
                             <i class='bx bxs-bank icon'></i>
-                            <span class="text nav-text">Wallets</span>
+                            <span class="text nav-text">Transaction Log</span>
                         </a>
                     </li>
 
